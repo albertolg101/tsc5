@@ -57,12 +57,14 @@
 }
 
 (int) get_seqno() method_id {
+    slice storage = get_data();
     storage~skip_bits(256 + 32);
     storage~load_msg_addr();
     return storage~load_uint(32);
 }
 
 (int) get_execution_time() method_id {
+    slice storage = get_data();
     storage~skip_bits(256);
     return storage~load_uint(32);
 }
