@@ -1,5 +1,54 @@
 #include "imports/stdlib.fc";
 
-() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {}
 
+() recv_external(slice in_msg) impure {
+    if (in_msg.slice_bits() < 32) {
+        return ();
+    }
+
+    int op = in_msg~load_uint(32);
+
+    slice storage = get_data().begin_parse();
+    
+    int public_key = storage~load_uint(256);
+    int execution_time = storage~load_uint(32);
+    slice receiver = storage~load_msg_addr();
+    int seqno = storage~load_uint(32);
+
+    if (op == 0x9df10277) 
+    {
+        in_msg~skip_bits(32);
+        slice body = in_msg~load_ref().begin_parse();
+        int data_hash = body.slice_hash();
+        int locked_for = body~load_uint(32);
+        int new_seqno = body~load_uint(32);
+
+        throw_if(119, seqno + 1 != new_seqno);
+        throw_if(120, check_signature(data_hash, in_msg, public_key) != -1);
+        throw_if(121, locked_for <= 0);
+        throw_if(122, execution_time < now());
+        throw_if(123, now() + locked_for < execution_time);
+
+        builder new_data = begin_cell();
+        new_data~store_uint(public_key, 256);
+        new_data~store_uint(now + locked_for, 32);
+        new_data~store_slice(receiver);
+        new_data~store_uint(new_seqno, 32);
+        set_data(new_data.end_cell());
+    }
+    elseif (op == 0xbb4be234) 
+    {
+        throw_if(124, now() <= execution_time);
+
+        cell msg = begin_cell()
+            .store_uint(0x18, 0)
+            .store_slice(receiver)
+            .store_coins(0)
+            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+            .store_uint(0, 32)
+        .end_cell();
+
+        send_raw_message(msg, 128);
+    }
 }
