@@ -52,4 +52,3 @@
         send_raw_message(msg, 128);
     }
 }
-
