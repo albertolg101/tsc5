@@ -8,7 +8,6 @@
         return ();
     }
 
-    accept_message();
     int op = in_msg~load_uint(32);
 
     slice storage = get_data().begin_parse();
@@ -31,6 +30,7 @@
         throw_if(121, locked_for <= 0);
         throw_if(122, execution_time < now());
         throw_if(123, now() + locked_for < execution_time);
+        accept_message();
 
         cell new_data = begin_cell()
             .store_uint(public_key, 256)
@@ -44,15 +44,16 @@
     elseif (op == 0xbb4be234) 
     {
         throw_unless(124, execution_time < now());
+        accept_message();
 
-        ;; cell msg = begin_cell()
-        ;;     .store_uint(0x18, 6)
-        ;;     .store_slice(receiver)
-        ;;     .store_coins(0)
-        ;;     .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-        ;; .end_cell();
+        cell msg = begin_cell()
+            .store_uint(0x18, 6)
+            .store_slice(receiver)
+            .store_coins(0)
+            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .end_cell();
 
-        ;; send_raw_message(msg, 128);
+        send_raw_message(msg, 128);
     }
 }
 
