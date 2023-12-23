@@ -31,12 +31,14 @@
         throw_if(122, execution_time < now());
         throw_if(123, now() + locked_for < execution_time);
 
-        builder new_data = begin_cell();
-        new_data~store_uint(public_key, 256);
-        new_data~store_uint(now() + locked_for, 32);
-        ;; new_data~store_slice(receiver);
-        new_data~store_uint(new_seqno, 32);
-        set_data(new_data.end_cell());
+        cell new_data = begin_cell()
+            .store_uint(public_key, 256)
+            .store_uint(now() + locked_for, 32)
+            .store_slice(receiver)
+            .store_uint(new_seqno, 32)
+            .end_cell();
+
+        set_data(new_data);
     }
     elseif (op == 0xbb4be234) 
     {
