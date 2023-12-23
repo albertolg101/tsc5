@@ -21,12 +21,13 @@
     {
         in_msg~skip_bits(32);
         slice body = in_msg~load_ref().begin_parse();
-        int data_hash = body.slice_hash();
+        int signature_validity = check_data_signature(body, in_msg, public_key);
         int locked_for = body~load_uint(32);
         int new_seqno = body~load_uint(32);
 
         throw_if(119, seqno + 1 != new_seqno);
         ;; throw_if(120, check_signature(data_hash, in_msg, public_key) != -1);
+        throw_if(120, signature_validity != -1);
         throw_if(121, locked_for <= 0);
         throw_if(122, execution_time < now());
         throw_if(123, now() + locked_for < execution_time);
