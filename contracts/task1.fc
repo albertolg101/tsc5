@@ -34,7 +34,7 @@
         builder new_data = begin_cell();
         new_data~store_uint(public_key, 256);
         new_data~store_uint(now() + locked_for, 32);
-        new_data~store_slice(receiver);
+        ;; new_data~store_slice(receiver);
         new_data~store_uint(new_seqno, 32);
         set_data(new_data.end_cell());
     }
