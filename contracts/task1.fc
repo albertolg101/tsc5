@@ -43,16 +43,16 @@
     }
     elseif (op == 0xbb4be234) 
     {
-        throw_unless(124, execution_time < now());
+        ;; throw_unless(124, execution_time < now());
 
-        cell msg = begin_cell()
-            .store_uint(0x18, 6)
-            .store_slice(receiver)
-            .store_coins(0)
-            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-        .end_cell();
+        ;; cell msg = begin_cell()
+        ;;     .store_uint(0x18, 6)
+        ;;     .store_slice(receiver)
+        ;;     .store_coins(0)
+        ;;     .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        ;; .end_cell();
 
-        send_raw_message(msg, 128);
+        ;; send_raw_message(msg, 128);
     }
 }
 
