@@ -57,7 +57,7 @@
 
 (int) get_seqno() method_id {
     slice storage = get_data().begin_parse();
-    return storage.slice_last(32).load_uint(32);
+    return storage.slice_last(32)~load_uint(32);
 }
 
 (int) get_execution_time() method_id {
