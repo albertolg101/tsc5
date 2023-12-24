@@ -74,7 +74,7 @@ SWAP SETINDEXVAR
     }
 
     d = d.set_index_var(sx, sy, 0);
-    flag~set_index_var(sx, sy, 0);
+    flag = flag.set_index_var(sx, sy, 0);
 
     tuple dx = to_tuple([1, 0, -1, 0, 1, 1, -1, -1]);
     tuple dy = to_tuple([0, 1, 0, -1, 1, -1, 1, -1]);
@@ -111,7 +111,7 @@ SWAP SETINDEXVAR
             ;; break
         }
 
-        flag~set_index_var(x, y, 0);
+        flag = flag.set_index_var(x, y, 0);
 
         while ( i < 8 ) {
             int nx = x + dx.at(i);
@@ -121,8 +121,8 @@ SWAP SETINDEXVAR
                 int cost = maze.at(nx).at(ny).get_cost();
 
                 if (d.at(nx).at(ny) > d.at(x).at(y) + cost) {
-                    d~set_index_var(nx, ny, d.at(x).at(y) + cost);
-                    p~set_index_var(nx, ny, (x << 5) + y);
+                    d = d.set_index_var(nx, ny, d.at(x).at(y) + cost);
+                    p = d.set_index_var(nx, ny, (x << 5) + y);
                 }
             }
 
@@ -137,7 +137,7 @@ SWAP SETINDEXVAR
     int y = parent & 0x1F;
 
     do {
-        maze~set_index_var(x, y, 33);
+        maze = maze.set_index_var(x, y, 33);
         parent = p.at(x).at(y);
         x = parent >> 5;
         y = parent & 0x1F;
