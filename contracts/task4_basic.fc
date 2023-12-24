@@ -73,7 +73,7 @@ SWAP SETINDEXVAR
         i += 1;
     }
 
-    d~set_index_var(sx, sy, 0);
+    d = d.set_index_var(sx, sy, 0);
     flag~set_index_var(sx, sy, 0);
 
     tuple dx = to_tuple([1, 0, -1, 0, 1, 1, -1, -1]);
