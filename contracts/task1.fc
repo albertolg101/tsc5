@@ -54,7 +54,7 @@
 }
 
 (int) get_seqno_asm() asm """
-c4 PUSH CTOS 32 SDCUTLAST 32 PLDUX
+c4 PUSH CTOS 32 INT SDCUTLAST 32 PLDU
 """;
 
 (int) get_seqno() method_id {
@@ -63,7 +63,7 @@ c4 PUSH CTOS 32 SDCUTLAST 32 PLDUX
 }
 
 (int) get_execution_time_asm() asm """
-c4 PUSH CTOS 256 SDSKIPFIRST 32 PLDUX
+c4 PUSH CTOS 256 INT SDSKIPFIRST 32 PLDU
 """;
 
 (int) get_execution_time() method_id {
