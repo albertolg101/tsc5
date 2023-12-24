@@ -41,6 +41,8 @@ SWAP SETINDEXVAR
     int ex = 0;
     int ey = 0;
     
+    return (-1, 0, 0, null());
+
     ;; parent
     tuple p = new_tuple_of(new_tuple_of(INF, m), n);
     ;; distance
