@@ -53,10 +53,20 @@
     }
 }
 
+(int) get_seqno_asm() asm """
+c4 PUSH CTOS 32 SDCUTLAST 32 PLDUX
+""";
+
 (int) get_seqno() method_id {
-    return get_data().begin_parse().slice_last(32).preload_uint(32);
+    ;; return get_data().begin_parse().slice_last(32).preload_uint(32);
+    return get_seqno_asm();
 }
 
+(int) get_execution_time_asm() asm """
+c4 PUSH CTOS 256 SDSKIPFIRST 32 PLDUX
+""";
+
 (int) get_execution_time() method_id {
-    return get_data().begin_parse().skip_bits(256).preload_uint(32);
+    ;;return get_data().begin_parse().skip_bits(256).preload_uint(32);
+    return get_execution_time_asm();
 }
