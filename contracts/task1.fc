@@ -16,10 +16,11 @@
     if (op == 0x9df10277) 
     {
         in_msg~skip_bits(64);
-        slice in_msg_body = in_msg~load_ref().begin_parse();
-        int in_msg_body_hash = in_msg_body.slice_hash();
-        int locked_for = in_msg_body~load_uint(32);
-        int new_seqno = in_msg_body~load_uint(32);
+        cell in_msg_body_c = in_msg~load_ref();
+        slice in_msg_body_s = in_msg_body_c.begin_parse();
+        int in_msg_body_hash = in_msg_body_c.cell_hash();
+        int locked_for = in_msg_body_s~load_uint(32);
+        int new_seqno = in_msg_body_s~load_uint(32);
 
         throw_if(119, seqno + 1 != new_seqno);
         throw_unless(120, check_signature(in_msg_body_hash, in_msg, public_key));
@@ -41,24 +42,21 @@
     {
         throw_unless(124, execution_time < now());
         accept_message();
-
-        cell msg = begin_cell()
-            .store_uint(0x18, 6)
-            .store_slice(receiver)
-            .store_coins(0)
-            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-        .end_cell();
-
-        send_raw_message(msg, 128);
+        send_raw_message(
+            begin_cell()
+                .store_uint(0x18, 6)
+                .store_slice(receiver)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .end_cell(), 
+            128);
     }
 }
 
 (int) get_seqno() method_id {
-    slice storage = get_data().begin_parse();
-    return storage.slice_last(32).preload_uint(32);
+    return get_data().begin_parse().slice_last(32).preload_uint(32);
 }
 
 (int) get_execution_time() method_id {
-    slice storage = get_data().begin_parse();
-    return storage.skip_bits(256).preload_uint(32);
+    return get_data().begin_parse().skip_bits(256).preload_uint(32);
 }
