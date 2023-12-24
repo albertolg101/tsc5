@@ -1,9 +1,152 @@
 #include "imports/stdlib.fc";
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+}
 
+const int INF = 1000000000; ;; 10 ** 9
+
+forall X -> (tuple) to_tuple (X x) asm "NOP";
+
+forall X -> (tuple) new_tuple_of(X value, int size) asm """
+DUP 1 SETGLOB DEC
+REPEAT:<{
+    DUP
+}>
+1 GETGLOB
+TUPLEVAR
+""";
+
+forall X -> (tuple) set_index_var(tuple t, int i, int j, X value) asm """
+3 PUSH 3 PUSH INDEXVAR 2 XCHG0 SETINDEXVAR
+SWAP SETINDEXVAR
+""";
+
+(int) get_cost(int value) inline {
+    if (value == 63) {
+        return 1 << 10;
+    }
+    elseif (value == 88) {
+        return 1 << 20;
+    }
+    
+    return 1;
 }
 
 (int, int, int, tuple) solve(int n, int m, tuple maze) {
-    return (0, 0, 0, null());
+    ;; start node
+    int sx = 0;
+    int xy = 0;
+
+    ;; end node
+    int ex = 0;
+    int ey = 0;
+    
+    ;; parent
+    tuple p = new_tuple_of(new_tuple_of(INF, m), n);
+    ;; distance
+    tuple d = p;
+    ;; visited
+    tuple flag = p;
+
+    int i = 0;
+    int j = 0;
+    while ( i < n ) {
+        j = 0 ;
+        while ( j < m ) {
+
+            int value = maze.at(i).at(j);
+
+            if (value == 83) {
+                sx = i;
+                sy = j;
+            }
+
+            elseif (value == 69) {
+                ex = i;
+                ey = j;
+            }
+
+            j += 1;
+        }
+        i += 1;
+    }
+
+    d~set_index_var(sx, sy, 0);
+    flag~set_index_var(sx, sy, 0);
+
+    tuple dx = to_tuple([1, 0, -1, 0, 1, 1, -1, -1]);
+    tuple dy = to_tuple([0, 1, 0, -1, 1, -1, 1, -1]);
+
+    int v = n * m;
+    int k = 0;
+    while ( k < v ) {
+        int x = -1;
+        int y = -1;
+        
+        i = 0;
+        while ( i < n ) {
+            j = 0;
+            while ( j < m ) {
+        
+                if (flag.at(i).at(j) != INF) {
+                    if ( x == -1 ) {
+                        (x, y) = (i, j);
+                    } elseif ( d.at(x).at(y) > d.at(i).at(j) ) {
+                        (x, y) = (i, j);
+                    }
+                }
+
+                j += 1;
+            }
+            i += 1;
+        }
+
+        i = 0;
+
+        if (d.at(x).at(y) == INF) {
+            k = v;
+            i = 8;
+            ;; break
+        }
+
+        flag~set_index_var(x, y, 0);
+
+        while ( i < 8 ) {
+            int nx = x + dx.at(i);
+            int ny = y + dy.at(i);
+
+            if ((0 <= nx) & (nx < n) & (0 <= ny) & (ny < m)) {
+                int cost = maze.at(nx).at(ny).get_cost();
+
+                if (d.at(nx).at(ny) > d.at(x).at(y) + cost) {
+                    d~set_index_var(nx, ny, d.at(x).at(y) + cost);
+                    p~set_index_var(nx, ny, (x << 5) + y);
+                }
+            }
+
+            i += 1;
+        }
+
+        k += 1;
+    }
+
+    int parent = p.at(ex).at(ey);
+    int x = parent >> 5;
+    int y = parent & 0x1F;
+
+    do {
+        maze~set_index_var(x, y, 33);
+        parent = p.at(x).at(y);
+        x = parent >> 5;
+        y = parent & 0x1F;
+    } until ((x == sx) & (y == sy));
+
+    int cost = d.at(ex).at(ey);
+    
+    return (
+        (cost >> 20),
+        (cost >> 10) & 0x3FF,
+        cost & 0x3FF,
+        maze
+    );
 }
