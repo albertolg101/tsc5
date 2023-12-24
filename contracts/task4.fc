@@ -149,4 +149,5 @@ SWAP SETINDEXVAR
     ;;     cost & 0x3FF,
     ;;     maze
     ;; );
+    return (0, 0, 0, null());
 }
