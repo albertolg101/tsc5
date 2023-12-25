@@ -4,5 +4,6 @@
 }
 
 (int, int, int, tuple) solve(int n, int m, tuple maze) {
-    return (-1, 0, 0, null());
+    tuple sometuple = null();
+    return (-1, 0, 0, sometuple);
 }
