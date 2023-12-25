@@ -90,15 +90,16 @@ SWAP SETINDEXVAR
             j = 0;
             while ( j < m ) {
         
-                if (flag.at(i).at(j) != 1000000000) {
-                    x = 0;
+                x = 0;
+                ;; if (flag.at(i).at(j) != 1000000000) {
+                ;;     x = 0;
                     ;; if ( x == -1 ) {
                     ;;     (x, y) = (i, j);
                     ;; } 
                     ;; elseif ( d.at(x).at(y) > d.at(i).at(j) ) {
                     ;;     (x, y) = (i, j);
                     ;; }
-                }
+                ;; }
 
                 j += 1;
 
