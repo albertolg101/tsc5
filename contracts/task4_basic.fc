@@ -3,34 +3,34 @@
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 }
 
-const int INF = 1000000000; ;; 10 ** 9
+;; const int INF = 1000000000; ;; 10 ** 9
 
-forall X -> (tuple) to_tuple (X x) asm "NOP";
+;; forall X -> (tuple) to_tuple (X x) asm "NOP";
 
-forall X -> (tuple) new_tuple_of(X value, int size) asm """
-DUP 1 SETGLOB DEC
-REPEAT:<{
-    DUP
-}>
-1 GETGLOB
-TUPLEVAR
-""";
+;; forall X -> (tuple) new_tuple_of(X value, int size) asm """
+;; DUP 1 SETGLOB DEC
+;; REPEAT:<{
+;;     DUP
+;; }>
+;; 1 GETGLOB
+;; TUPLEVAR
+;; """;
 
-forall X -> (tuple) set_index_var(tuple t, int i, int j, X value) asm """
-3 PUSH 3 PUSH INDEXVAR 2 XCHG0 SETINDEXVAR
-SWAP SETINDEXVAR
-""";
+;; forall X -> (tuple) set_index_var(tuple t, int i, int j, X value) asm """
+;; 3 PUSH 3 PUSH INDEXVAR 2 XCHG0 SETINDEXVAR
+;; SWAP SETINDEXVAR
+;; """;
 
-(int) get_cost(int value) inline {
-    if (value == 63) {
-        return 1 << 10;
-    }
-    elseif (value == 88) {
-        return 1 << 20;
-    }
+;; (int) get_cost(int value) inline {
+;;     if (value == 63) {
+;;         return 1 << 10;
+;;     }
+;;     elseif (value == 88) {
+;;         return 1 << 20;
+;;     }
     
-    return 1;
-}
+;;     return 1;
+;; }
 
 (int, int, int, tuple) solve(int n, int m, tuple maze) {
     tuple a = null();
