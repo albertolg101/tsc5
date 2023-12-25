@@ -74,7 +74,6 @@ SWAP SETINDEXVAR
     
 
     d = d.set_index_var(sx, sy, 0);
-    return (-1, 0, 0, null());
     flag = flag.set_index_var(sx, sy, 0);
 
     tuple dx = to_tuple([1, 0, -1, 0, 1, 1, -1, -1]);
@@ -132,6 +131,8 @@ SWAP SETINDEXVAR
 
         k += 1;
     }
+
+    return (-1, 0, 0, null());
 
     int parent = p.at(ex).at(ey);
     int x = parent >> 5;
