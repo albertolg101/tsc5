@@ -80,10 +80,11 @@ SWAP SETINDEXVAR
     tuple dy = to_tuple([0, 1, 0, -1, 1, -1, 1, -1]);
 
     int k = 0;
+    int c = d.at(n - 1).at(m - 1);
+    return (-1, 0, 0, null());
 
     while ( k < (n * m) ) {
 
-        return (-1, 0, 0, null());
         int x = -1;
         int y = -1;
         
@@ -106,7 +107,6 @@ SWAP SETINDEXVAR
             i += 1;
 
         }
-
 
         i = 0;
 
