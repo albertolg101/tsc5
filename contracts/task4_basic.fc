@@ -100,11 +100,13 @@ SWAP SETINDEXVAR
                 }
 
                 j += 1;
+        return (-1, 0, 0, null());
+
             }
             i += 1;
+
         }
 
-        return (-1, 0, 0, null());
 
         i = 0;
 
