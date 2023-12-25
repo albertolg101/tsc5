@@ -44,9 +44,9 @@ SWAP SETINDEXVAR
     ;; parent
     tuple p = new_tuple_of(new_tuple_of(1000000000, m), n);
     ;; distance
-    tuple d = p;
+    tuple d = new_tuple_of(new_tuple_of(1000000000, m), n);
     ;; visited
-    tuple flag = p;
+    tuple flag = new_tuple_of(new_tuple_of(1000000000, m), n);
 
     int i = 0;
     int j = 0;
@@ -90,7 +90,7 @@ SWAP SETINDEXVAR
             j = 0;
             while ( j < m ) {
         
-                x = p.at(i).at(j);
+                x = flag.at(i).at(j);
                 ;; if (flag.at(i).at(j) != 1000000000) {
                     ;; if ( x == -1 ) {
                     ;;     (x, y) = (i, j);
