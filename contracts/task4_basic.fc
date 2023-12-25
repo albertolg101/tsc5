@@ -71,6 +71,8 @@ SWAP SETINDEXVAR
         i += 1;
     }
 
+    return (-1, 0, 0, null());
+
     d = d.set_index_var(sx, sy, 0);
     flag = flag.set_index_var(sx, sy, 0);
 
