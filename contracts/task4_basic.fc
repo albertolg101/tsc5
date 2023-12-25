@@ -82,7 +82,6 @@ SWAP SETINDEXVAR
     int k = 0;
 
     while ( k < (n * m) ) {
-        return (-1, 0, 0, null());
         ;; int x = -1;
         ;; int y = -1;
         
@@ -132,8 +131,10 @@ SWAP SETINDEXVAR
         ;;     i += 1;
         ;; }
 
-        ;; k += 1;
+        k += 1;
     }
+
+    return (-1, 0, 0, null());
 
     int parent = p.at(ex).at(ey);
     int x = parent >> 5;
