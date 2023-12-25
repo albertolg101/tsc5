@@ -145,12 +145,12 @@ SWAP SETINDEXVAR
     int x = parent >> 5;
     int y = parent & 0x1F;
 
-    do {
+    while ((x != sx) | (y != sy)) {
         maze~set_index_var(x, y, 33);
         parent = p.at(x).at(y);
         x = parent >> 5;
         y = parent & 0x1F;
-    } until ((x == sx) & (y == sy));
+    }
 
     return (
         cost >> 20,

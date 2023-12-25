@@ -38,9 +38,9 @@ SWAP SETINDEXVAR
 (int, int, int, tuple) solve(int n, int m, tuple maze) method_id {
 ;; (int, int, int, tuple) solve() method_id {
     ;; int n = 2;
-    ;; int m = 3;
-    ;; tuple t1 = to_tuple([83, 88, 69]);
-    ;; tuple t2 = to_tuple([63, 88, 88]);
+    ;; int m = 2;
+    ;; tuple t1 = to_tuple([83, 69]);
+    ;; tuple t2 = to_tuple([63, 88]);
     ;; tuple maze = to_tuple([t1, t2]);
 
     ;; start node
@@ -149,15 +149,15 @@ SWAP SETINDEXVAR
     int x = parent >> 5;
     int y = parent & 0x1F;
 
-    do {
+    while ((x != sx) | (y != sy)) {
         maze~set_index_var(x, y, 33);
         parent = p.at(x).at(y);
         x = parent >> 5;
         y = parent & 0x1F;
-    } until ((x == sx) & (y == sy));
+    }
 
     return (
-        0,
+        -1,
         (cost >> 10) & 0x3FF,
         cost & 0x3FF,
         maze
