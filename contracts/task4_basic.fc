@@ -3,7 +3,7 @@
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 }
 
-const int INF = 1000000000; ;; 10 ** 9
+const int INF = (1 << 30);
 
 forall X -> (tuple) to_tuple (X x) asm "NOP";
 
