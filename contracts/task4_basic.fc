@@ -90,7 +90,7 @@ SWAP SETINDEXVAR
             j = 0;
             while ( j < m ) {
         
-                x = flag.at(i).at(j);
+                x = p.at(i).at(j);
                 ;; if (flag.at(i).at(j) != 1000000000) {
                     ;; if ( x == -1 ) {
                     ;;     (x, y) = (i, j);
