@@ -33,7 +33,8 @@ SWAP SETINDEXVAR
 }
 
 (int, int, int, tuple) solve(int n, int m, tuple maze) {
-    return (-1, 0, 0, null());
+    tuple a = null();
+    return (-1, 0, 0, a);
     
     ;; ;; start node
     ;; int sx = 0;
