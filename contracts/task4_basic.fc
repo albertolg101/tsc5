@@ -81,9 +81,9 @@ SWAP SETINDEXVAR
 
     int k = 0;
     int c = d.at(n - 1).at(m - 1);
-    return (-1, 0, 0, null());
 
     while ( k < (n * m) ) {
+    return (-1, 0, 0, null());
 
         int x = -1;
         int y = -1;
