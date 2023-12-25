@@ -1,4 +1,4 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from 'ton-core';
+import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, TupleBuilder } from 'ton-core';
 
 export type Task4BasicConfig = {};
 
@@ -25,5 +25,11 @@ export class Task4Basic implements Contract {
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell().endCell(),
         });
+    }
+    
+    async getSolve(provider: ContractProvider) {
+        let params = new TupleBuilder();
+        const value = await provider.get("solve", params.build());
+        return value;
     }
 }

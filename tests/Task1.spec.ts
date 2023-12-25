@@ -3,6 +3,7 @@ import { Cell, toNano } from 'ton-core';
 import { Task1 } from '../wrappers/Task1';
 import '@ton-community/test-utils';
 import { compile } from '@ton-community/blueprint';
+import { task4BasicConfigToCell } from '../wrappers/Task4Basic';
 
 describe('Task1', () => {
     let code: Cell;
@@ -32,7 +33,5 @@ describe('Task1', () => {
     });
 
     it('should deploy', async () => {
-        // the check is done inside beforeEach
-        // blockchain and task1 are ready to use
     });
 });
