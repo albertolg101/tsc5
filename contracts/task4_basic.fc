@@ -113,11 +113,11 @@ SWAP SETINDEXVAR
 
         i = 0;
 
-        ;; if (d.at(x).at(y) == INF) {
-        ;;     k = n * m;
-        ;;     i = 8;
+        if (d.at(x).at(y) == INF) {
+            k = n * m;
+            i = 8;
             ;; break
-        ;; }
+        }
 
         flag~set_index_var(x, y, 0);
 
@@ -157,7 +157,7 @@ SWAP SETINDEXVAR
     } until ((x == sx) & (y == sy));
 
     return (
-        -1,
+        0,
         (cost >> 10) & 0x3FF,
         cost & 0x3FF,
         maze
