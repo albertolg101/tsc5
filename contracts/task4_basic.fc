@@ -91,7 +91,7 @@ SWAP SETINDEXVAR
             while ( j < m ) {
         
                 if (flag.at(i).at(j) != INF) {
-                    x = i;
+                    x = 0;
                     ;; if ( x == -1 ) {
                     ;;     (x, y) = (i, j);
                     ;; } 
