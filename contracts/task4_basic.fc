@@ -81,9 +81,9 @@ SWAP SETINDEXVAR
 
     int v = n * m;
     int k = 0;
+        return (-1, 0, 0, null());
 
     while ( k < v ) {
-        return (-1, 0, 0, null());
 
         int x = -1;
         int y = -1;
