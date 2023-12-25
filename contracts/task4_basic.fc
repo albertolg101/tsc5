@@ -85,6 +85,7 @@ SWAP SETINDEXVAR
     while ( k < v ) {
         int x = -1;
         int y = -1;
+        return (-1, 0, 0, null());
         
         i = 0;
         while ( i < n ) {
@@ -100,7 +101,6 @@ SWAP SETINDEXVAR
                 }
 
                 j += 1;
-        return (-1, 0, 0, null());
 
             }
             i += 1;
