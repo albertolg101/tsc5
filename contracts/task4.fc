@@ -3,7 +3,7 @@
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 }
 
-const int INF = (1 << 30);
+const int INF = (1 << 64);
 
 forall X -> (tuple) to_tuple (X x) asm "NOP";
 
@@ -26,10 +26,10 @@ SWAP SETINDEXVAR
 
 (int) get_cost(int value) inline {
     if (value == 63) {
-        return (1 << 10) + 1;
+        return (1 << 20) + 1;
     }
     elseif (value == 88) {
-        return (1 << 20) + 1;
+        return (1 << 40) + 1;
     }
     
     return 1;
@@ -130,7 +130,7 @@ SWAP SETINDEXVAR
 
                 if (d.at(nx).at(ny) > d.at(x).at(y) + cost) {
                     d~set_index_var(nx, ny, d.at(x).at(y) + cost);
-                    p~set_index_var(nx, ny, (x << 5) + y);
+                    p~set_index_var(nx, ny, (x << 12) + y);
                 }
             }
 
@@ -142,20 +142,20 @@ SWAP SETINDEXVAR
 
     int cost = d.at(ex).at(ey);
     int parent = p.at(ex).at(ey);
-    int x = parent >> 5;
-    int y = parent & 0x1F;
+    int x = parent >> 12;
+    int y = parent & 0xFFF;
 
     while ((x != sx) | (y != sy)) {
         maze~set_index_var(x, y, 33);
         parent = p.at(x).at(y);
-        x = parent >> 5;
-        y = parent & 0x1F;
+        x = parent >> 12;
+        y = parent & 0xFFF;
     }
 
     return (
-        cost >> 20,
-        (cost >> 10) & 0x3FF,
-        cost & 0x3FF,
+        cost >> 40,
+        (cost >> 20) & 0xFFFFF,
+        cost & 0xFFFFF,
         maze
     );
 }
