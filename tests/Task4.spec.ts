@@ -32,7 +32,7 @@ describe('Task4', () => {
     });
 
     it('should deploy', async () => {
-        // the check is done inside beforeEach
-        // blockchain and task4 are ready to use
+        let value = await task4.getSolve();
+        console.log(value);
     });
 });

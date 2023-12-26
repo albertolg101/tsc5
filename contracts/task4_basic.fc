@@ -35,13 +35,13 @@ SWAP SETINDEXVAR
     return 1;
 }
 
-(int, int, int, tuple) solve(int n, int m, tuple maze) method_id {
-;; (int, int, int, tuple) solve() method_id {
-    ;; int n = 2;
-    ;; int m = 2;
-    ;; tuple t1 = to_tuple([83, 69]);
-    ;; tuple t2 = to_tuple([63, 88]);
-    ;; tuple maze = to_tuple([t1, t2]);
+;; (int, int, int, tuple) solve(int n, int m, tuple maze) method_id {
+(int, int, int, tuple) solve() method_id {
+    int n = 2;
+    int m = 2;
+    tuple t1 = to_tuple([83, 69]);
+    tuple t2 = to_tuple([63, 88]);
+    tuple maze = to_tuple([t1, t2]);
 
     ;; start node
     int sx = 0;
