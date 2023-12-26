@@ -43,7 +43,7 @@ SWAP SETINDEXVAR
     ;; tuple t2 = to_tuple([63, 88, 88]);
     ;; tuple maze = to_tuple([t1, t2]);
 
-    throw_if(120, (n > 8) | (m > 8));
+    throw_if(120, (n >= 8) | (m >= 8));
 
     ;; start node
     int sx = 0;
