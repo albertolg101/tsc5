@@ -104,8 +104,7 @@ int get_total_share(cell dict) inline {
                     .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
                     .store_ref(
                         begin_cell()
-                            .store_uint(0x0f8a7ea5, 32)
-                            .store_uint(0, 64)
+                            .store_uint(0x0f8a7ea5 << 64, 32 + 64)
                             .store_coins(val.preload_uint(32) * amount / total_share)   
                             .store_uint(0x400, 11)
                             .store_uint(key, 256)
