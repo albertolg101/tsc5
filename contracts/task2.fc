@@ -92,7 +92,43 @@ int get_total_share(cell dict) inline {
 
     ;; transfer notification
     elseif (op == 0x7362d09c) {
-        throw_if(122, dict.dict_empty?());
+        (int key, slice val, int flag) = dict.udict_get_min?(256);
+        throw_unless(122, flag);
+
+        (_, int amount) = in_msg_body~skip_bits(64).load_coins();
+        int total_share = dict.get_total_share();
+
+        while (flag) {
+            
+            slice receiver = begin_cell()
+                .store_uint(0x400, 11)
+                .store_uint(key, 256)
+                .end_cell()
+                .begin_parse();
+
+            send_raw_message(
+                begin_cell()
+                    .store_uint(0x18, 6)
+                    .store_slice(receiver)
+                    .store_coins(20000000)
+                    .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                    .store_ref(
+                        begin_cell()
+                            .store_uint(0x0f8a7ea5, 32)
+                            .store_uint(0, 64)
+                            .store_coins(val.preload_uint(32) * amout / total_share)   
+                            .store_slice(receiver)
+                            .store_slice(receiver)
+                            .store_uint(0, 1)
+                            .store_coins(1)
+                            .store_uint(0, 1)
+                        .end_cell()
+                    )
+                    .end_cell(), 
+                1);
+
+            (key, val, flag) = dict.udict_get_next?(256, key);
+        }
     }
 }
 
