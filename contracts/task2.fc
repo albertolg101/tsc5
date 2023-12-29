@@ -95,7 +95,7 @@ int get_total_share(cell dict) inline {
         (int key, slice val, int flag) = dict.udict_get_min?(256);
         throw_unless(122, flag);
 
-        (_, int amount) = in_msg_body~skip_bits(64).load_coins();
+        (in_msg_body, int amount) = in_msg_body.skip_bits(64).load_coins();
         int total_share = dict.get_total_share();
 
         while (flag) {
@@ -116,7 +116,7 @@ int get_total_share(cell dict) inline {
                         begin_cell()
                             .store_uint(0x0f8a7ea5, 32)
                             .store_uint(0, 64)
-                            .store_coins(val.preload_uint(32) * amout / total_share)   
+                            .store_coins(val.preload_uint(32) * amount / total_share)   
                             .store_slice(receiver)
                             .store_slice(receiver)
                             .store_uint(0, 1)
