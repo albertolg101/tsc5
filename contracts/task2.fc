@@ -125,7 +125,7 @@ int get_total_share(cell dict) inline {
                         .end_cell()
                     )
                     .end_cell(), 
-                1);
+                0);
 
             (key, val, flag) = dict.udict_get_next?(256, key);
         }
