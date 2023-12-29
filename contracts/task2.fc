@@ -62,7 +62,7 @@ int get_total_share(cell dict) inline {
     ;; split
     if (op == 0x68530b3) {
         (int key, slice val, int flag) = dict.udict_get_min?(256);
-        throw_if(122, flag);
+        throw_unless(122, flag);
         int total_share = dict.get_total_share();
 
         while (flag) {
@@ -82,7 +82,7 @@ int get_total_share(cell dict) inline {
                     .end_cell(), 
                 1);
 
-            (key, val, flag) = dict.udict_get_min?(256);
+            (key, val, flag) = dict.udict_get_next?(256, key);
         }
     }
 
@@ -100,9 +100,6 @@ cell get_users() method_id {
 
 int get_user_share(slice user_address) method_id {
     int index = user_address~load_msg_addr().skip_bits(11).preload_uint(256);
-
-    slice storage = get_data().begin_parse();
-    _ = storage~load_msg_addr();
-    (slice val, _) = storage~load_dict().udict_get?(256, index);
-    return val.preload_uint(32);
+    (slice share, _) = get_users().udict_get?(256, index);
+    return share.preload_uint(32);
 }
