@@ -20,38 +20,41 @@ int get_total_share(cell dict) inline {
     int op = in_msg_body~load_uint(32);
 
     slice storage = get_data().begin_parse();
-    int admin_addr = storage~load_msg_addr();
+    slice admin = storage~load_msg_addr();
     cell dict = storage~load_dict();
 
     ;; add user
     if (op == 0x368ddef3) {
-        int sender = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
-        throw_if(120, sender != admin_addr);
+        (_, slice sender) = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
+        throw_if(120, sender.skip_bits(11).preload_uint(256) != admin.skip_bits(11).preload_uint(256));
 
         in_msg_body~skip_bits(64);
-        int addr = in_msg_body~load_msg_addr().skip_bits(11).load_uint(256);
-        int share = in_msg_body~load_uint(32);
+        int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
+        slice share = begin_cell()
+            .store_uint(in_msg_body~load_uint(32), 32)
+            .end_cell()
+            .begin_parse();
 
         dict~udict_set(236, addr, share);
 
         set_data(begin_cell()
-            .store_slice(admin_addr)
+            .store_slice(admin)
             .store_dict(dict)
             .end_cell());
     }
 
     ;; remove user
     if (op == 0x278205c8) {
-        int sender = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
-        throw_if(120, sender != admin_addr);
+        (_, slice sender) = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
+        throw_if(120, sender.skip_bits(11).preload_uint(256) != admin.skip_bits(11).preload_uint(256));
 
         in_msg_body~skip_bits(64);
-        int addr = in_msg_body~load_msg_addr().skip_bits(11).load_uint(256);
+        int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
 
         throw_if(121, dict~udict_delete?(256, addr));
 
         set_data(begin_cell()
-            .store_slice(admin_addr)
+            .store_slice(admin)
             .store_dict(dict)
             .end_cell());
     }
@@ -74,7 +77,7 @@ int get_total_share(cell dict) inline {
                 begin_cell()
                     .store_uint(0x18, 6)
                     .store_slice(receiver)
-                    .store_coins(val * msg_value / total_share)
+                    .store_coins(val.preload_uint(32) * msg_value / total_share)
                     .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
                     .end_cell(), 
                 1);
@@ -90,15 +93,16 @@ int get_total_share(cell dict) inline {
 }
 
 cell get_users() method_id {
-    slice storage = get_data();
+    slice storage = get_data().begin_parse();
     _ = storage~load_msg_addr();
     return storage~load_dict();
 }
 
-cell get_user_share(slice user_address) method_id {
-    int index~load_msg_addr().skip_bits(11).load_uint(256);
+int get_user_share(slice user_address) method_id {
+    int index = user_address~load_msg_addr().skip_bits(11).preload_uint(256);
 
-    slice storage = get_data();
+    slice storage = get_data().begin_parse();
     _ = storage~load_msg_addr();
-    storage.load_dict().udict_get?(256, index);
+    (slice val, _) = storage~load_dict().udict_get?(256, index);
+    return val.preload_uint(32);
 }
