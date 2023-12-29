@@ -51,15 +51,15 @@ int get_total_share(cell dict) inline {
         (_, slice sender) = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
         throw_if(120, sender.skip_bits(11).preload_uint(256) != admin.skip_bits(11).preload_uint(256));
 
-        ;; in_msg_body~skip_bits(64);
-        ;; int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
+        in_msg_body~skip_bits(64);
+        int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
 
-        ;; throw_if(121, dict~udict_delete?(256, addr));
+        throw_unless(121, dict~udict_delete?(256, addr));
 
-        ;; set_data(begin_cell()
-        ;;     .store_slice(admin)
-        ;;     .store_dict(dict)
-        ;;     .end_cell());
+        set_data(begin_cell()
+            .store_slice(admin)
+            .store_dict(dict)
+            .end_cell());
     }
 
     ;; split
