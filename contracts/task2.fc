@@ -1,5 +1,104 @@
 #include "imports/stdlib.fc";
 
+int get_total_share(cell dict) inline {
+    int total_share = 0;
+
+    (int key, slice val, int flag) = dict.udict_get_min?(256);
+
+    while (flag) {
+
+        total_share += val~load_uint(32);    
+
+        (key, val, flag) = dict.udict_get_min?(256);
+    }    
+
+    return total_share;
+}
+
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 
+    int op = in_msg_body~load_uint(32);
+
+    slice storage = get_data().begin_parse();
+    int admin_addr = storage~load_msg_addr();
+    cell dict = storage~load_dict();
+
+    ;; add user
+    if (op == 0x368ddef3) {
+        int sender = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
+        throw_if(120, sender != admin_addr);
+
+        in_msg_body~skip_bits(64);
+        int addr = in_msg_body~load_msg_addr().skip_bits(11).load_uint(256);
+        int share = in_msg_body~load_uint(32);
+
+        dict~udict_set(236, addr, share);
+
+        set_data(begin_cell()
+            .store_slice(admin_addr)
+            .store_dict(dict)
+            .end_cell());
+    }
+
+    ;; remove user
+    if (op == 0x278205c8) {
+        int sender = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
+        throw_if(120, sender != admin_addr);
+
+        in_msg_body~skip_bits(64);
+        int addr = in_msg_body~load_msg_addr().skip_bits(11).load_uint(256);
+
+        throw_if(121, dict~udict_delete?(256, addr));
+
+        set_data(begin_cell()
+            .store_slice(admin_addr)
+            .store_dict(dict)
+            .end_cell());
+    }
+
+    ;; split
+    if (op == 0x68530b3) {
+        (int key, slice val, int flag) = dict.udict_get_min?(256);
+        throw_if(122, flag);
+        int total_share = dict.get_total_share();
+
+        while (flag) {
+            
+            slice receiver = begin_cell()
+                .store_uint(0x400, 11)
+                .store_uint(key, 256)
+                .end_cell()
+                .begin_parse();
+
+            send_raw_message(
+                begin_cell()
+                    .store_uint(0x18, 6)
+                    .store_slice(receiver)
+                    .store_coins(val * msg_value / total_share)
+                    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                    .end_cell(), 
+                1);
+
+            (key, val, flag) = dict.udict_get_min?(256);
+        }
+    }
+
+    ;; transfer notification
+    if (op == 0x7362d09c) {
+        throw_if(122, dict.dict_empty?());
+    }
+}
+
+cell get_users() method_id {
+    slice storage = get_data();
+    _ = storage~load_msg_addr();
+    return storage~load_dict();
+}
+
+cell get_user_share(slice user_address) method_id {
+    int index~load_msg_addr().skip_bits(11).load_uint(256);
+
+    slice storage = get_data();
+    _ = storage~load_msg_addr();
+    storage.load_dict().udict_get?(256, index);
 }
