@@ -34,7 +34,7 @@ int get_total_share(cell dict) inline {
         in_msg_body~skip_bits(64);
         int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
         slice share = begin_cell()
-            .store_uint(in_msg_body~load_uint(32), 32)
+            .store_slice(in_msg_body)
             .end_cell()
             .begin_parse();
 
@@ -70,17 +70,12 @@ int get_total_share(cell dict) inline {
         int total_share = dict.get_total_share();
 
         while (flag) {
-            
-            slice receiver = begin_cell()
-                .store_uint(0x400, 11)
-                .store_uint(key, 256)
-                .end_cell()
-                .begin_parse();
 
             send_raw_message(
                 begin_cell()
                     .store_uint(0x18, 6)
-                    .store_slice(receiver)
+                    .store_uint(0x400, 11)
+                    .store_uint(key, 256)
                     .store_coins(val.preload_uint(32) * msg_value / total_share)
                     .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
                     .end_cell(), 
@@ -100,12 +95,6 @@ int get_total_share(cell dict) inline {
         int total_share = dict.get_total_share();
 
         while (flag) {
-            
-            slice receiver = begin_cell()
-                .store_uint(0x400, 11)
-                .store_uint(key, 256)
-                .end_cell()
-                .begin_parse();
 
             send_raw_message(
                 begin_cell()
@@ -118,8 +107,10 @@ int get_total_share(cell dict) inline {
                             .store_uint(0x0f8a7ea5, 32)
                             .store_uint(0, 64)
                             .store_coins(val.preload_uint(32) * amount / total_share)   
-                            .store_slice(receiver)
-                            .store_slice(receiver)
+                            .store_uint(0x400, 11)
+                            .store_uint(key, 256)
+                            .store_uint(0x400, 11)
+                            .store_uint(key, 256)
                             .store_uint(0, 1)
                             .store_coins(1)
                             .store_uint(0, 1)
