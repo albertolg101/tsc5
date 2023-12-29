@@ -9,7 +9,7 @@ int get_total_share(cell dict) inline {
 
         total_share += val~load_uint(32);    
 
-        (key, val, flag) = dict.udict_get_min?(256);
+        (key, val, flag) = dict.udict_get_next?(256, key);
     }    
 
     return total_share;
@@ -38,7 +38,7 @@ int get_total_share(cell dict) inline {
             .end_cell()
             .begin_parse();
 
-        dict~udict_set(236, addr, share);
+        dict~udict_set(256, addr, share);
 
         set_data(begin_cell()
             .store_slice(admin)
@@ -64,8 +64,8 @@ int get_total_share(cell dict) inline {
 
     ;; split
     elseif (op == 0x68530b3) {
-        throw_if(122, dict.dict_empty?());
         (int key, slice val, int flag) = dict.udict_get_min?(256);
+        throw_unless(122, flag);
 
         int total_share = dict.get_total_share();
 
