@@ -25,66 +25,66 @@ int get_total_share(cell dict) inline {
 
     ;; add user
     if (op == 0x368ddef3) {
-        (_, slice sender) = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
-        throw_if(120, sender.skip_bits(11).preload_uint(256) != admin.skip_bits(11).preload_uint(256));
+        ;; (_, slice sender) = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
+        ;; throw_if(120, sender.skip_bits(11).preload_uint(256) != admin.skip_bits(11).preload_uint(256));
 
-        in_msg_body~skip_bits(64);
-        int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
-        slice share = begin_cell()
-            .store_uint(in_msg_body~load_uint(32), 32)
-            .end_cell()
-            .begin_parse();
+        ;; in_msg_body~skip_bits(64);
+        ;; int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
+        ;; slice share = begin_cell()
+        ;;     .store_uint(in_msg_body~load_uint(32), 32)
+        ;;     .end_cell()
+        ;;     .begin_parse();
 
-        dict~udict_set(236, addr, share);
+        ;; dict~udict_set(236, addr, share);
 
-        set_data(begin_cell()
-            .store_slice(admin)
-            .store_dict(dict)
-            .end_cell());
+        ;; set_data(begin_cell()
+        ;;     .store_slice(admin)
+        ;;     .store_dict(dict)
+        ;;     .end_cell());
     }
 
     ;; remove user
     elseif (op == 0x278205c8) {
-        (_, slice sender) = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
-        throw_if(120, sender.skip_bits(11).preload_uint(256) != admin.skip_bits(11).preload_uint(256));
+        ;; (_, slice sender) = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
+        ;; throw_if(120, sender.skip_bits(11).preload_uint(256) != admin.skip_bits(11).preload_uint(256));
 
-        in_msg_body~skip_bits(64);
-        int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
+        ;; in_msg_body~skip_bits(64);
+        ;; int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
 
-        throw_if(121, dict~udict_delete?(256, addr));
+        ;; throw_if(121, dict~udict_delete?(256, addr));
 
-        set_data(begin_cell()
-            .store_slice(admin)
-            .store_dict(dict)
-            .end_cell());
+        ;; set_data(begin_cell()
+        ;;     .store_slice(admin)
+        ;;     .store_dict(dict)
+        ;;     .end_cell());
     }
 
     ;; split
     elseif (op == 0x68530b3) {
         throw_if(122, dict.dict_empty?());
-        (int key, slice val, int flag) = dict.udict_get_min?(256);
+        ;; (int key, slice val, int flag) = dict.udict_get_min?(256);
 
-        int total_share = dict.get_total_share();
+        ;; int total_share = dict.get_total_share();
 
-        while (flag) {
+        ;; while (flag) {
             
-            slice receiver = begin_cell()
-                .store_uint(0x400, 11)
-                .store_uint(key, 256)
-                .end_cell()
-                .begin_parse();
+        ;;     slice receiver = begin_cell()
+        ;;         .store_uint(0x400, 11)
+        ;;         .store_uint(key, 256)
+        ;;         .end_cell()
+        ;;         .begin_parse();
 
-            send_raw_message(
-                begin_cell()
-                    .store_uint(0x18, 6)
-                    .store_slice(receiver)
-                    .store_coins(val.preload_uint(32) * msg_value / total_share)
-                    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-                    .end_cell(), 
-                1);
+        ;;     send_raw_message(
+        ;;         begin_cell()
+        ;;             .store_uint(0x18, 6)
+        ;;             .store_slice(receiver)
+        ;;             .store_coins(val.preload_uint(32) * msg_value / total_share)
+        ;;             .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        ;;             .end_cell(), 
+        ;;         1);
 
-            (key, val, flag) = dict.udict_get_next?(256, key);
-        }
+        ;;     (key, val, flag) = dict.udict_get_next?(256, key);
+        ;; }
     }
 
     ;; transfer notification
