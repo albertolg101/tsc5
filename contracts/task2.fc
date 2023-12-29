@@ -44,7 +44,7 @@ int get_total_share(cell dict) inline {
     }
 
     ;; remove user
-    if (op == 0x278205c8) {
+    elseif (op == 0x278205c8) {
         (_, slice sender) = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
         throw_if(120, sender.skip_bits(11).preload_uint(256) != admin.skip_bits(11).preload_uint(256));
 
@@ -60,9 +60,10 @@ int get_total_share(cell dict) inline {
     }
 
     ;; split
-    if (op == 0x68530b3) {
+    elseif (op == 0x68530b3) {
+        throw_if(122, dict.dict_empty?());
         (int key, slice val, int flag) = dict.udict_get_min?(256);
-        throw_unless(122, flag);
+
         int total_share = dict.get_total_share();
 
         while (flag) {
@@ -87,7 +88,7 @@ int get_total_share(cell dict) inline {
     }
 
     ;; transfer notification
-    if (op == 0x7362d09c) {
+    elseif (op == 0x7362d09c) {
         throw_if(122, dict.dict_empty?());
     }
 }
