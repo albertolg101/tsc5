@@ -55,32 +55,30 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
         return ();
     }
 
-    slice c4 = get_data().begin_parse();
+    slice c4 = get_data().begin_parse(); 
     int actual_version = c4.preload_uint(32);
     cell storage = c4.preload_ref();
 
     if (actual_version != expected_version) {
         throw_if(200, code.cell_null?());
 
-        int v = actual_version;
-        while(v < expected_version) {
-            (slice val, int flag) = migrations.udict_get?(32, v);
+        while (actual_version < expected_version) {
+            (slice val, int flag) = migrations.udict_get?(32, actual_version);
             throw_unless(400, flag);
-            v = val.preload_uint(32);
+
+            actual_version = val.preload_uint(32);
+            cell migration_code = val~load_maybe_cell();
+            ifnot (migration_code.cell_null?()) {
+                set_c3(migration_code.begin_parse().bless());
+                storage = migrate_one(storage);
+            }
         }
 
         throw_if(400, v != expected_version);
 
-        while (actual_version < expected_version) {
-            (slice val, _) = migrations.udict_get?(32, actual_version);
-            actual_version = val.preload_uint(32);
-            set_c3(val.preload_ref().begin_parse().bless());
-            storage = migrate_one(storage);
-        }
-        wrap_storage(actual_version, storage);
-
         set_code(code);
         set_c3(code.begin_parse().bless());
+        wrap_storage(actual_version, storage);
     }
     
     cell storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
