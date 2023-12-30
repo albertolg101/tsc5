@@ -60,7 +60,7 @@ cell migrate_one(cell old_storage) {
             throw_unless(400, flag);
             actual_version = val~load_uint(32);
             cell migration_code = val~load_maybe_ref();
-            ifnot (migrate_code.cell_null?()) {
+            ifnot (migration_code.cell_null?()) {
                 set_c3(migration_code.begin_parse().bless());
                 storage = migrate_one(storage);
             }
