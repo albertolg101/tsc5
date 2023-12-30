@@ -67,14 +67,14 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
             throw_unless(400, flag);
 
             actual_version = val.preload_uint(32);
-            cell migration_code = val~load_maybe_cell();
+            cell migration_code = val~load_maybe_ref();
             ifnot (migration_code.cell_null?()) {
                 set_c3(migration_code.begin_parse().bless());
                 storage = migrate_one(storage);
             }
         }
 
-        throw_if(400, v != expected_version);
+        throw_if(400, actual_version != expected_version);
 
         set_code(code);
         set_c3(code.begin_parse().bless());
