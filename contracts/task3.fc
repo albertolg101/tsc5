@@ -55,9 +55,11 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
         return ();
     }
 
-    int actual_version = version();
-    throw_if(400, actual_version > expected_version);
-    if (actual_version < expected_version) {
+    int c4 = get_data();
+    int actual_version = c4.preload_uint(32);
+    cell storage = c4.preload_ref();
+
+    if (actual_version != expected_version) {
         throw_if(200, code.cell_null?());
 
         int v = actual_version;
@@ -69,7 +71,6 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
 
         throw_if(400, v != expected_version);
 
-        cell storage = get_storage();
         while (actual_version < expected_version) {
             (slice val, _) = migrations.udict_get?(32, actual_version);
             actual_version = val.preload_uint(32);
@@ -82,6 +83,6 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
         set_c3(code.begin_parse().bless());
     }
     
-    cell storage = process_message(get_storage(), msg_value, balance, in_msg_full, payload.begin_parse());
+    cell storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
     set_data(wrap_storage(actual_version, storage));
 }
