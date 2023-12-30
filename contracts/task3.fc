@@ -51,7 +51,7 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
     cell migrations = in_msg_body~load_dict();
     cell payload = in_msg_body~load_ref();
 
-    cell c4 = get_data();
+    slice c4 = get_data().begin_parse();
     int actual_version = c4~load_uint(32);
     cell storage = c4~load_ref();
 
@@ -61,5 +61,5 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
     }
 
     storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
-    set_data(actual_version, storage);
+    wrap_storage(actual_version, storage);
 }
