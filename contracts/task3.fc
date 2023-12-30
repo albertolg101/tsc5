@@ -35,7 +35,7 @@ cell migrate_one(cell old_storage) {
                 .store_uint(1, 32)
                 .store_ref(
                     begin_cell()
-                    .store_uint(32)
+                    .store_uint(0, 32)
                     .end_cell()
                 )
             .end_cell()
