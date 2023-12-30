@@ -65,6 +65,6 @@ cell migrate_one(cell old_storage) {
         ;; set_c3(code.begin_parse().bless());
     }
     
-    cell storage = process_message(get_storage(), msg_value, balance, in_msg_full, payload.begin_parse());
-    set_data(wrap_storage(actual_version, storage));
+    ;; cell storage = process_message(get_storage(), msg_value, balance, in_msg_full, payload.begin_parse());
+    ;; set_data(wrap_storage(actual_version, storage));
 }
