@@ -28,25 +28,24 @@ cell migrate_one(cell old_storage) {
 
 () recv_internal(int msg_value, int balance, cell in_msg_full, slice in_msg_body) impure {
     int expected_version = in_msg_body~load_uint(32); ;; Load the expected version
-
-    if (expected_version == 0) {
-        set_data(
-            begin_cell()
-                .store_uint(1, 32)
-                .store_ref(
-                    begin_cell()
-                    .store_uint(0, 32)
-                    .end_cell()
-                )
-            .end_cell()
-        );
-
-        return ();
-    }
-
     cell code = in_msg_body~load_maybe_ref(); ;; Load the expected code
     cell migrations = in_msg_body~load_dict(); ;; Load migrations
     cell payload = in_msg_body~load_ref();
+
+    if (expected_version == 0) {
+        cell storage = begin_cell()
+            .store_uint(1, 32)
+            .store_ref(
+                begin_cell()
+                .end_cell()
+            )
+            .end_cell();
+        
+        storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
+        set_data(storage);
+
+        return ();
+    }
 
     slice c4 = get_data().begin_parse();
     int actual_version = c4~load_uint(32);
