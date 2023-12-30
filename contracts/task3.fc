@@ -48,7 +48,7 @@ cell migrate_one(cell old_storage) {
 
     int actual_version = version();
     if (version() < expected_version) {
-        throw_if(200, code.cell_null?());
+        ;; throw_if(200, code.cell_null?());
 
         int v = actual_version;
         while(v < expected_version) {
