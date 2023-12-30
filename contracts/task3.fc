@@ -44,11 +44,14 @@ cell migrate_one(cell old_storage) {
     }
 
     cell code = in_msg_body~load_maybe_ref(); ;; Load the expected code
-    ;; cell migrations = in_msg_body~load_dict(); ;; Load migrations
-    ;; cell payload = in_msg_body~load_ref();
+    cell migrations = in_msg_body~load_dict(); ;; Load migrations
+    cell payload = in_msg_body~load_ref();
 
-    int actual_version = get_data().begin_parse().preload_uint(32);
-    if (actual_version < expected_version) {
+    slice c4 = get_data().begin_parse();
+    int actual_version = c4~load_uint(32);
+    cell storage = c4~load_ref();
+    
+    if (actual_version != expected_version) {
         throw_if(200, code.cell_null?());
 
         ;; int v = actual_version;
