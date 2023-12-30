@@ -36,49 +36,30 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
 ;; Custom version-specific code ends >>>>>
 
 () recv_internal(int msg_value, int balance, cell in_msg_full, slice in_msg_body) impure {
-    int expected_version = in_msg_body~load_uint(32); ;; Load the expected version
+    int expected_version = in_msg_body~load_uint(32);
+
     if (expected_version == 0) {
-        set_data(
-            begin_cell()
-                .store_uint(1, 32)
-                .store_ref(
-                    begin_cell()
-                    .end_cell()
-                )
-            .end_cell()
-        );
+        set_data(begin_cell()
+            .store_uint(1, 32)
+            .store_ref(begin_cell().end_cell())
+            .end_cell());
 
         return ();
     }
-    
-    cell code = in_msg_body~load_maybe_ref(); ;; Load the expected code
-    cell migrations = in_msg_body~load_dict(); ;; Load migrations
+
+    cell code = in_msg_body~load_maybe_ref();
+    cell migrations = in_msg_body~load_dict();
     cell payload = in_msg_body~load_ref();
 
-    slice c4 = get_data().begin_parse(); 
-    int actual_version = c4.preload_uint(32);
-    cell storage = c4.preload_ref();
+    cell c4 = get_data();
+    int actual_version = c4~load_uint(32);
+    cell storage = c4~load_ref();
 
     if (actual_version != expected_version) {
         throw_if(200, code.cell_null?());
-
-        do {
-            (slice val, int flag) = migrations.udict_get?(32, actual_version);
-            throw_unless(400, flag);
-
-            actual_version = val~load_uint(32);
-            cell migration_code = val~load_maybe_ref();
-            ifnot (migration_code.cell_null?()) {
-                set_c3(migration_code.begin_parse().bless());
-                storage = migrate_one(storage);
-            }
-        } until(actual_version == expected_version);
-
-        set_code(code);
-        set_c3(code.begin_parse().bless());
-        wrap_storage(actual_version, storage);
+        actual_version = expected_version;
     }
-    
-    cell storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
-    set_data(wrap_storage(actual_version, storage));
+
+    storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
+    set_data(actual_version, storage);
 }
