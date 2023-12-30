@@ -47,6 +47,8 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
         return ();
     }
 
+    throw_if(200, (version() != expected_version) & code.cell_null?());
+
     cell code = in_msg_body~load_maybe_ref();
     cell migrations = in_msg_body~load_dict();
     cell payload = in_msg_body~load_ref();
