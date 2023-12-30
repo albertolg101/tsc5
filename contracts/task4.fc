@@ -46,7 +46,6 @@ SWAP SETINDEXVAR
     int ex = 0;
     int ey = 0;
     
-    ;; parent
     tuple t = new_tuple_of(new_tuple_of(INF, m), n);
 
     int i = 0;
@@ -125,6 +124,7 @@ SWAP SETINDEXVAR
         }
         
         t~set_index_var(x, y, t.at(x).at(y) | 1);
+        ;; ~dump(t);
 
         i = 0;
         repeat(8) {
@@ -135,7 +135,7 @@ SWAP SETINDEXVAR
                 int cost = maze.at(nx).at(ny).get_cost();
 
                 if (t.at(nx).at(ny) > t.at(x).at(y) + (cost << 11)) {
-                    t~set_index_var(nx, ny, ((t.at(x).at(y) >> 11) << 11) + (x << 6) + (y << 1));
+                    t~set_index_var(nx, ny, (((t.at(x).at(y) >> 11) + cost) << 11) + (x << 6) + (y << 1));
                 }
             }
 
@@ -146,4 +146,16 @@ SWAP SETINDEXVAR
     }
 
     return (0, 0, 0, null());
+}
+
+() test_solve() method_id {
+    tuple t1 = to_tuple([83, 88, 88]);
+    tuple t2 = to_tuple([46, 46, 46]);
+    tuple t3 = to_tuple([46, 46, 69]);
+    tuple t = to_tuple([t1, t2, t3]);
+    (int a, int b, int c, tuple maze) = solve(3, 3, t);
+    ~dump(a);
+    ~dump(b);
+    ~dump(c);
+    ~dump(maze);
 }

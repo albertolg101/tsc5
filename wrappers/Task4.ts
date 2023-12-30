@@ -29,7 +29,7 @@ export class Task4 implements Contract {
 
     async getSolve(provider: ContractProvider) {
         let params = new TupleBuilder();
-        const value = await provider.get("solve", params.build());
+        const value = await provider.get("test_solve", params.build());
         return value;
     }
 }

@@ -33,6 +33,5 @@ describe('Task4', () => {
 
     it('should deploy', async () => {
         let value = await task4.getSolve();
-        console.log(value);
     });
 });
