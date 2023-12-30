@@ -54,12 +54,12 @@ cell migrate_one(cell old_storage) {
     if (actual_version != expected_version) {
         throw_if(200, code.cell_null?());
 
-        ;; do {
+        do {
 
-        ;;     (slice val, int flag) = migrations.udict_get?(32, actual_version);
-        ;;     throw_unless(400, flag);
+            (slice val, int flag) = migrations.udict_get?(32, actual_version);
+            throw_unless(400, flag);
 
-        ;; } until (actual_version == expected_version);
+        } until (actual_version == expected_version);
 
         ;; set_code(code);
         ;; set_c3(code.begin_parse().bless());
