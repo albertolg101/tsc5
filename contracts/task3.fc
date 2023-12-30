@@ -28,9 +28,6 @@ cell migrate_one(cell old_storage) {
 
 () recv_internal(int msg_value, int balance, cell in_msg_full, slice in_msg_body) impure {
     int expected_version = in_msg_body~load_uint(32); ;; Load the expected version
-    cell code = in_msg_body~load_maybe_ref(); ;; Load the expected code
-    cell migrations = in_msg_body~load_dict(); ;; Load migrations
-    cell payload = in_msg_body~load_ref();
 
     if (expected_version == 0) {
         set_data(begin_cell()
@@ -40,6 +37,10 @@ cell migrate_one(cell old_storage) {
 
         return ();
     }
+
+    cell code = in_msg_body~load_maybe_ref(); ;; Load the expected code
+    cell migrations = in_msg_body~load_dict(); ;; Load migrations
+    cell payload = in_msg_body~load_ref();
 
     slice c4 = get_data().begin_parse();
     int actual_version = c4~load_uint(32);
@@ -66,5 +67,5 @@ cell migrate_one(cell old_storage) {
     }
     
     ;; cell storage = process_message(get_storage(), msg_value, balance, in_msg_full, payload.begin_parse());
-    ;; set_data(wrap_storage(actual_version, storage));
+    set_data(wrap_storage(actual_version, storage));
 }
