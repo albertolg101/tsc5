@@ -5,6 +5,12 @@
 
 const int INF = (1 << (30 + 10 + 1));
 
+forall X -> int is_null? (X x) asm "ISNULL";
+
+forall X -> (tuple, ()) push_back (tuple tail, X head) asm "CONS";
+
+forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
+
 forall X -> (tuple) to_tuple (X x) asm "NOP";
 
 forall X -> (tuple, ()) ~set_index_var2(tuple t, X value, int i) asm "SETINDEXVAR";
@@ -79,21 +85,14 @@ SWAP SETINDEXVAR
     int k = 0;
     int x = -1;
     int y = -1;
-    int next_x = -1;
-    int next_y = -1;
-    int flag = 0;
+    tuple list = null();
 
     repeat(n * m) {
-        x = -1;
-        y = -1;
 
-        if (flag) {
-            next_x = -1;
-            next_y = -1;
-            flag = 0;
-        }
+        if (list.is_null?()) {
+            x = -1;
+            y = -1;
 
-        if (next_x == -1) {
             i = 0;
             repeat(n) {
                 j = 0;
@@ -102,7 +101,6 @@ SWAP SETINDEXVAR
                     ifnot ( t.at(i).at(j) & 1 ) {
                         if ( x == -1 ) {
                             (x, y) = (i, j);
-                            (next_x, next_y) = (-1, -1);
                         } 
                         else {
                             int t1 = t.at(x).at(y) >> 11;
@@ -110,10 +108,10 @@ SWAP SETINDEXVAR
 
                             if ( t1 > t2 ) {
                                 (x, y) = (i, j);
-                                (next_x, next_y) = (-1, -1);
+                                list = null();
                             }
                             elseif ( t1 == t2 ) {
-                                (next_x, next_y) = (i, j);
+                                list~push_back((i << 5) + j);
                             }
                         }
                     }
@@ -124,8 +122,9 @@ SWAP SETINDEXVAR
             }
         }
         else {
-            (x, y) = (next_x, next_y);
-            flag = -1;
+            int temp = list~pop_back();
+            x = temp >> 5;
+            y = temp & 0x1F;
         }
 
         if ((x == ex) & (y == ey)) {
@@ -162,9 +161,6 @@ SWAP SETINDEXVAR
 
                 if (t.at(nx).at(ny) > t.at(x).at(y) + (cost << 11)) {
                     t~set_index_var(nx, ny, (((t.at(x).at(y) >> 11) + cost) << 11) + (x << 6) + (y << 1));
-                    if ((next_x == -1) & (cost == 1)) {
-                        (next_x, next_y) = (nx, ny);
-                    }
                 }
             }
 
