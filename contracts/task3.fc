@@ -1,10 +1,10 @@
 #include "imports/stdlib.fc";
 
 cell get_storage() {
-    return get_data().begin_parse().skip_bits(32).preload_ref();
+    return get_data().begin_parse().preload_ref();
 }
 
-cell wrap_storage(int version_id, cell storage) {
+cell wrap_storage(int version_id, cell storage) inline {
     return begin_cell()
         .store_uint(version_id, 32)
         .store_ref(storage)
@@ -45,13 +45,11 @@ int version() method_id {
                 set_c3(migration_code.begin_parse().bless());
                 storage = migrate_one(storage);
             }
-            set_data(wrap_storage(actual_version, storage));
 
         } until (actual_version == expected_version);
 
         set_code(code);
         set_c3(code.begin_parse().bless());
-        set_data(wrap_storage(actual_version, storage));
     }
     
     storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
