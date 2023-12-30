@@ -77,29 +77,48 @@ SWAP SETINDEXVAR
     tuple dy = to_tuple([0, 1, 0, -1, 1, -1, 1, -1]);
 
     int k = 0;
+    int x = -1;
+    int y = -1;
+    int next_x = -1;
+    int next_y = -1;
 
     repeat(n * m) {
-        int x = -1;
-        int y = -1;
-        
-        i = 0;
-        repeat(n) {
-            j = 0;
-            repeat(m) {
+        x = -1;
+        y = -1;
 
-        
-                ifnot ( t.at(i).at(j) & 1 ) {
-                    if ( x == -1 ) {
-                        (x, y) = (i, j);
-                    } 
-                    elseif ( t.at(x).at(y) > t.at(i).at(j) ) {
-                        (x, y) = (i, j);
+        if (next_x == -1) {
+            i = 0;
+            repeat(n) {
+                j = 0;
+                repeat(m) {
+            
+                    ifnot ( t.at(i).at(j) & 1 ) {
+                        if ( x == -1 ) {
+                            (x, y) = (i, j);
+                            (next_x, next_y) = (-1, -1);
+                        } 
+                        else {
+                            int t1 = t.at(x).at(y) >> 11;
+                            int t2 = t.at(i).at(j) >> 11;
+
+                            if ( t1 > t2 ) {
+                                (x, y) = (i, j);
+                                (next_x, next_y) = (-1, -1);
+                            }
+                            elseif ( t1 == t2 ) {
+                                (next_x, next_y) = (i, j);
+                            }
+                        }
                     }
-                }
 
-                j += 1;
+                    j += 1;
+                }
+                i += 1;
             }
-            i += 1;
+        }
+        else {
+            (x, y) = (next_x, next_y);
+            (next_x, next_y) = (-1, -1);
         }
 
         if ((x == ex) & (y == ey)) {
