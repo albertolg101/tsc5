@@ -55,7 +55,7 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
         return ();
     }
 
-    int c4 = get_data();
+    slice c4 = get_data().begin_parse();
     int actual_version = c4.preload_uint(32);
     cell storage = c4.preload_ref();
 
