@@ -33,11 +33,9 @@ cell migrate_one(cell old_storage) {
     cell payload = in_msg_body~load_ref();
 
     if (expected_version == 0) {
-        cell storage = begin_cell().end_cell();
-        storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
         set_data(begin_cell()
             .store_uint(1, 32)
-            .store_ref(storage)
+            .store_ref(get_data())
             .end_cell());
 
         return ();
