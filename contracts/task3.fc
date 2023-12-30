@@ -28,9 +28,9 @@ cell migrate_one(cell old_storage) {
 
 () recv_internal(int msg_value, int balance, cell in_msg_full, slice in_msg_body) impure {
     int expected_version = in_msg_body~load_uint(32); ;; Load the expected version
-    cell code = in_msg_body~load_maybe_ref(); ;; Load the expected code
-    cell migrations = in_msg_body~load_dict(); ;; Load migrations
-    cell payload = in_msg_body~load_ref();
+    ;; cell code = in_msg_body~load_maybe_ref(); ;; Load the expected code
+    ;; cell migrations = in_msg_body~load_dict(); ;; Load migrations
+    ;; cell payload = in_msg_body~load_ref();
 
     if (expected_version == 0) {
         set_data(
