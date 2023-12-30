@@ -39,11 +39,7 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
     int expected_version = in_msg_body~load_uint(32); ;; Load the expected version
 
     if (expected_version == 0) {
-        set_data(begin_cell()
-            .store_uint(1, 32)
-            .store_ref(get_data())
-            .end_cell());
-
+        set_data(wrap_storage(1, get_data()));
         return ();
     }
 
@@ -66,7 +62,7 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
             cell migration_code = val~load_maybe_ref();
             ifnot (migration_code.cell_null?()) {
                 set_c3(migration_code.begin_parse().bless());
-                ;; storage = migrate_one(storage);
+                storage = migrate_one(storage);
             }
             set_data(wrap_storage(actual_version, storage));
 
