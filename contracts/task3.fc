@@ -56,8 +56,6 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
     cell storage = c4~load_ref();
 
     if (actual_version != expected_version) {
-        throw_if(200, code.cell_null?());
-
         do {
             (slice val, int flag) = migrations.udict_get?(32, actual_version);
             throw_unless(400, flag);
@@ -71,6 +69,7 @@ cell migrate_one(cell old_storage) { ;; it's just a placeholder that is required
 
         } until(actual_version == expected_version);
 
+        throw_if(200, code.cell_null?());
         set_c3(code.begin_parse().bless());
         set_code(code);
         wrap_storage(actual_version, storage);
