@@ -1,7 +1,7 @@
 #include "imports/stdlib.fc";
 
 cell get_storage() {
-    return get_data().begin_parse().preload_ref();
+    return get_data().begin_parse().skip_bits(32).preload_ref();
 }
 
 cell wrap_storage(int version_id, cell storage) {
