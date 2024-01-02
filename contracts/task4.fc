@@ -5,17 +5,17 @@
 
 const int INF = (1 << (30 + 10));
 
-forall X -> int is_null? (X x) asm "ISNULL";
+forall X -> int is_null? (X x) inline asm "ISNULL";
 
-forall X -> (tuple, ()) push_back (tuple tail, X head) asm "CONS";
+forall X -> (tuple, ()) push_back (tuple tail, X head) inline asm "CONS";
 
-forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
+forall X -> (tuple, (X)) pop_back (tuple t) inline asm "UNCONS";
 
 forall X -> (tuple) to_tuple (X x) asm "NOP";
 
-forall X -> (tuple, ()) ~set_index_var2(tuple t, X value, int i) asm "SETINDEXVAR";
+forall X -> (tuple, ()) ~set_index_var2(tuple t, X value, int i) inline asm "SETINDEXVAR";
 
-forall X -> (tuple) new_tuple_of(X value, int size) asm """
+forall X -> (tuple) new_tuple_of(X value, int size) inline asm """
 DUP 1 SETGLOB DEC
 REPEAT:<{
     DUP
@@ -24,7 +24,7 @@ REPEAT:<{
 TUPLEVAR
 """;
 
-forall X -> (tuple, ()) ~set_index_var(tuple t, int i, int j, X value) asm """
+forall X -> (tuple, ()) ~set_index_var(tuple t, int i, int j, X value) inline asm """
 s3 s2 PUSH2
 INDEXVAR 
 s2 XCHG0
@@ -164,4 +164,17 @@ SWAP SETINDEXVAR
     }
 
     return (0, 0, 0, null());
+}
+
+() test_solve() method_id {
+    tuple t1 = to_tuple([83, 46, 88, 88, 46]);
+    tuple t2 = to_tuple([46, 46, 63, 46, 63]);
+    tuple t3 = to_tuple([88, 88, 63, 88, 88]);
+    tuple t4 = to_tuple([46, 88, 63, 88, 69]);
+    tuple t = to_tuple([t1, t2, t3, t4]);
+    (int a, int b, int c, tuple maze) = solve(4, 5, t);
+    ~dump(a);
+    ~dump(b);
+    ~dump(c);
+    ~dump(maze);
 }
