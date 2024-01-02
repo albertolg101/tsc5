@@ -127,8 +127,6 @@ SWAP SETINDEXVAR
         } until ((t.at(x).at(y) ^ 1) | (list.is_null?()));
 
         if ((x == ex) & (y == ey)) {
-            ~dump(k);
-
             repeat((cost & 0x3FF) - 1) {
                 (_, x, y) = unwrap_distance(t.at(x).at(y));
                 maze~set_index_var(x, y, 33);
