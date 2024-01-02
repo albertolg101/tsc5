@@ -122,9 +122,9 @@ SWAP SETINDEXVAR
         }
 
         ;; try optimize this
-        do {
+        ;; do {
             (cost, x, y) = unwrap_distance(list~pop_back());
-        } until ((t.at(x).at(y) ^ 1) | (list.is_null?()));
+        ;; } until ((t.at(x).at(y) ^ 1) | (list.is_null?()));
 
         if ((x == ex) & (y == ey)) {
             repeat((cost & 0x3FF) - 1) {
