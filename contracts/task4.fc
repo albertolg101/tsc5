@@ -115,10 +115,7 @@ SWAP SETINDEXVAR
     t~set_index_var(sx, sy, 0);
     list~push_back(wrap_distance(0, sx, sy));
 
-    int k = 0;
-
-    repeat(n * m) {
-        k += 1;
+    repeat(n * m * n * m) {
 
         if (list.is_null?()) {
             list = d~get_list();
@@ -130,6 +127,8 @@ SWAP SETINDEXVAR
         } until ((t.at(x).at(y) ^ 1) | (list.is_null?()));
 
         if ((x == ex) & (y == ey)) {
+            ~dump(k);
+
             repeat((cost & 0x3FF) - 1) {
                 (_, x, y) = unwrap_distance(t.at(x).at(y));
                 maze~set_index_var(x, y, 33);
