@@ -116,10 +116,10 @@ SWAP SETINDEXVAR
     }
 
     ;; when you change this remember to change repeat 8 by 4
-    tuple dx = to_tuple([1, 0, -1, 0, 1, 1, -1, -1]);
-    tuple dy = to_tuple([0, 1, 0, -1, 1, -1, 1, -1]);
-    ;; tuple dx = to_tuple([1, 0, -1, 0]);
-    ;; tuple dy = to_tuple([0, 1, 0, -1]);
+    ;; tuple dx = to_tuple([1, 0, -1, 0, 1, 1, -1, -1]);
+    ;; tuple dy = to_tuple([0, 1, 0, -1, 1, -1, 1, -1]);
+    tuple dx = to_tuple([1, 0, -1, 0]);
+    tuple dy = to_tuple([0, 1, 0, -1]);
 
     (int cost, int x, int y) = (0, 0, 0);
     tuple d = null();
@@ -154,7 +154,7 @@ SWAP SETINDEXVAR
         }
         
         i = 0;
-        repeat(8) {
+        repeat(4) {
             int nx = x + dx.at(i);
             int ny = y + dy.at(i);
 
