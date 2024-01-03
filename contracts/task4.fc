@@ -7,8 +7,7 @@ const int INF = (1 << (30 + 10));
 
 forall X -> int is_null? (X x) asm "ISNULL";
 
-forall X -> (tuple) push_back (tuple tail, X head) asm "CONS";
-forall X -> (tuple, ()) ~push_back (tuple tail, X head) asm "CONS";
+forall X -> (tuple, ()) push_back (tuple tail, X head) asm "CONS";
 
 forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 
@@ -119,8 +118,10 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
     tuple d = null();
     int d_size = 0;
     tuple t = new_tuple_of(new_tuple_of(INF, m), n);
-    tuple list = null().push_back(wrap_distance(0, sx, sy));
+    tuple list = null();
+
     t~set_index_var(sx, sy, 0);
+    list~push_back(wrap_distance(0, sx, sy));
 
     repeat(n * m) {
 
