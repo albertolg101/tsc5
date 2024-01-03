@@ -45,29 +45,23 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
 31 PUSHINT AND
 """;
 
-(tuple, tuple) ~get_list(tuple d) inline {
+(tuple, tuple, int) extract(tuple d, int t) {
     tuple temp = null();
     tuple ans = null();
     int min_d = INF;
 
     while (~ d.is_null?()) {
         int td = d~pop_back();
-        if ((td >> 10) > min_d) {
+        if ((td >> 10) == t) {
+            ans~push_back(td);
+        }
+        else {
             temp~push_back(td);
-        }
-        elseif ((td >> 10) == min_d) {
-            ans~push_back(td);
-        }
-        else { ;; (td >> 10) < min_d
-            min_d = td >> 10;
-            while (~ ans.is_null?()) {
-                temp~push_back(ans~pop_back());
-            }
-            ans~push_back(td);
+            min_d = min(min_d, td >> 10);
         }
     }
 
-    return (temp, ans);
+    return (temp, ans, min_d);
 }
 
 (int, int, int, tuple) solve(int n, int m, tuple maze) method_id {
@@ -110,6 +104,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
     ;; tuple dy = to_tuple([0, 1, 0, -1]);
 
     int cost = 0;
+    int next_cost = INF;
     int x = -1;
     int y = -1;
     tuple d = null();
@@ -122,7 +117,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
     repeat(n * m) {
 
         if (list.is_null?()) {
-            list = d~get_list();
+            (d, list, next_cost) = d.extract(next_cost);
         }
 
         (cost, x, y) = unwrap_distance(list~pop_back());
@@ -161,6 +156,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
                 if (target_cost > new_cost) {
                     t~set_index_var(nx, ny, wrap_distance(new_cost, x, y));
                     d~push_back(wrap_distance(new_cost, nx, ny));
+                    next_cost = min(next_cost, new_cost);
                 }
             }
 
