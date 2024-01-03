@@ -45,7 +45,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
 31 PUSHINT AND
 """;
 
-(tuple, tuple, int) extract(tuple d, int t) {
+(tuple, tuple, int) extract(tuple d, int t) inline {
     tuple temp = null();
     tuple ans = null();
     int min_d = INF;
