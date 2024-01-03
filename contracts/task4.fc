@@ -7,8 +7,7 @@ const int INF = (1 << (30 + 10));
 
 forall X -> int is_null? (X x) asm "ISNULL";
 
-forall X -> (tuple) push_back (tuple tail, X head) asm "CONS";
-forall X -> (tuple, ()) ~push_back (tuple tail, X head) asm "CONS";
+forall X -> (tuple, ()) push_back (tuple tail, X head) asm "CONS";
 
 forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 
@@ -119,62 +118,58 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
     tuple d = null();
     int d_size = 0;
     tuple t = new_tuple_of(new_tuple_of(INF, m), n);
-    tuple list = null().push_back(wrap_distance(0, sx, sy));
-    int list_size = 1;
+    tuple list = null();
 
     t~set_index_var(sx, sy, 0);
+    list~push_back(wrap_distance(0, sx, sy));
 
     repeat(n * m) {
 
         if (list.is_null?()) {
-            (d, int nd_size, list) = d.get_list(d_size);
-            list_size = d_size - nd_size;
-            d_size = nd_size;
+            (d, d_size, list) = d.get_list(d_size);
         }
 
-        repeat(list_size) {
-            (cost, x, y) = unwrap_distance(list~pop_back());
+        (cost, x, y) = unwrap_distance(list~pop_back());
 
-            if ((x == ex) & (y == ey)) {
-                repeat((cost & 0x3FF) - 1) {
-                    (_, x, y) = unwrap_distance(t.at(x).at(y));
-                    maze~set_index_var(x, y, 33);
+        if ((x == ex) & (y == ey)) {
+            repeat((cost & 0x3FF) - 1) {
+                (_, x, y) = unwrap_distance(t.at(x).at(y));
+                maze~set_index_var(x, y, 33);
+            }
+
+            return (
+                cost >> 20,
+                (cost >> 10) & 0x3FF,
+                cost & 0x3FF,
+                maze
+            );
+        }
+        
+        i = 0;
+        repeat(8) {
+            int nx = x + dx.at(i);
+            int ny = y + dy.at(i);
+
+            if ((0 <= nx) & (nx < n) & (0 <= ny) & (ny < m)) {
+                int target_cost = t.at(nx).at(ny) >> 10;
+                int new_cost = cost + 1;
+                int value = maze.at(nx).at(ny);
+
+                if (value == 63) {
+                    new_cost += (1 << 10);
+                }
+                elseif (value == 88) {
+                    new_cost += (1 << 20);
                 }
 
-                return (
-                    cost >> 20,
-                    (cost >> 10) & 0x3FF,
-                    cost & 0x3FF,
-                    maze
-                );
-            }
-            
-            i = 0;
-            repeat(8) {
-                int nx = x + dx.at(i);
-                int ny = y + dy.at(i);
-
-                if ((0 <= nx) & (nx < n) & (0 <= ny) & (ny < m)) {
-                    int target_cost = t.at(nx).at(ny) >> 10;
-                    int new_cost = cost + 1;
-                    int value = maze.at(nx).at(ny);
-
-                    if (value == 63) {
-                        new_cost += (1 << 10);
-                    }
-                    elseif (value == 88) {
-                        new_cost += (1 << 20);
-                    }
-
-                    if (target_cost > new_cost) {
-                        t~set_index_var(nx, ny, wrap_distance(new_cost, x, y));
-                        d~push_back(wrap_distance(new_cost, nx, ny));
-                        d_size += 1;
-                    }
+                if (target_cost > new_cost) {
+                    t~set_index_var(nx, ny, wrap_distance(new_cost, x, y));
+                    d~push_back(wrap_distance(new_cost, nx, ny));
+                    d_size += 1;
                 }
-
-                i += 1;
             }
+
+            i += 1;
         }
     }
 
