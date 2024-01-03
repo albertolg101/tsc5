@@ -32,13 +32,18 @@ SETINDEXVAR
 SWAP SETINDEXVAR
 """;
 
-(int) wrap_distance(int d, int x, int y) inline {
-    return (d << 10) + (x << 5) + y;
-}
 
-(int, int, int) unwrap_distance(int t) inline {
-    return (t >> 10, (t >> 5) & 0x1F, t & 0x1F);
-}
+(int) wrap_distance(int d, int x, int y) asm(y d x) """
+5 LSHIFT#
+ROTREV 10 LSHIFT#
+ADD ADD
+""";
+
+(int, int, int) unwrap_distance(int t) asm """
+DUP 10 RSHIFT# SWAP
+DUP 5 RSHIFT# 31 PUSHINT AND SWAP
+31 PUSHINT AND
+""";
 
 (tuple, tuple) ~get_list(tuple d) inline {
     tuple temp = null();
