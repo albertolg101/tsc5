@@ -45,7 +45,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
 31 PUSHINT AND
 """;
 
-(tuple, tuple, int, int) extract(tuple d, int d_size, int t) inline {
+(tuple, int, int, tuple) extract(tuple d, int d_size, int t) inline {
     tuple temp = null();
     tuple ans = null();
     int min_d = INF;
@@ -62,7 +62,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
         }
     }
 
-    return (temp, ans, d_size, min_d);
+    return (temp, d_size, min_d, ans);
 }
 
 (int, int, int, tuple) solve(int n, int m, tuple maze) method_id {
@@ -119,7 +119,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
     repeat(n * m) {
 
         if (list.is_null?()) {
-            (d, list, d_size, next_cost) = d.extract(d_size, next_cost);
+            (d, d_size, next_cost, list) = d.extract(d_size, next_cost);
         }
 
         (cost, x, y) = unwrap_distance(list~pop_back());
