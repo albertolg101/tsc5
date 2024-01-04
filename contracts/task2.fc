@@ -12,6 +12,10 @@ LDMSGADDR DROP REWRITESTDADDR NIP
 REWRITESTDADDR NIP
 """;
 
+(slice, cell) unwrap_storage() asm """
+c4 PUSH LDMSGADDR LDDICT DROP
+""";
+
 int get_total_share(cell dict) inline {
     int total_share = 0;
 
@@ -32,11 +36,8 @@ int get_total_share(cell dict) inline {
         return ();
     }
 
+    (slice admin, cell dict) = unwrap_storage();
     int op = in_msg_body~load_uint(32);
-
-    slice storage = get_data().begin_parse();
-    slice admin = storage~load_msg_addr();
-    cell dict = storage~load_dict();
 
     ;; add user
     if (op == 0x368ddef3) {
