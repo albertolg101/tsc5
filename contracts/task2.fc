@@ -1,18 +1,18 @@
 #include "imports/stdlib.fc";
 
-(slice, int) ~load_std_addr(slice) asm """
+(slice, int) ~load_std_addr(slice) inline asm """
 LDMSGADDR SWAP REWRITESTDADDR NIP
 """;
 
-(int) preload_std_addr(slice) asm """
+(int) preload_std_addr(slice) inline asm """
 LDMSGADDR DROP REWRITESTDADDR NIP
 """;
 
-(int) get_std_addr(slice) asm """
+(int) get_std_addr(slice) inline asm """
 REWRITESTDADDR NIP
 """;
 
-(slice, cell) unwrap_storage() asm """
+(slice, cell) unwrap_storage() inline asm """
 c4 PUSH CTOS LDMSGADDR LDDICT DROP
 """;
 
