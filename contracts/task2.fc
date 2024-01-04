@@ -16,10 +16,8 @@ REWRITESTDADDR NIP
 c4 PUSH CTOS LDMSGADDR LDDICT DROP
 """;
 
-int get_total_share(cell dict) inline {
+int get_total_share(cell dict, int key, slice val, int flag) inline {
     int total_share = 0;
-
-    (int key, slice val, int flag) = dict.udict_get_min?(256);
 
     while (flag) {
 
@@ -76,7 +74,7 @@ int get_total_share(cell dict) inline {
         (int key, slice val, int flag) = dict.udict_get_min?(256);
         throw_unless(122, flag);
 
-        int total_share = dict.get_total_share();
+        int total_share = dict.get_total_share(key, val, flag);
 
         while (flag) {
 
@@ -101,7 +99,7 @@ int get_total_share(cell dict) inline {
 
         (_, slice sender) = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
         (in_msg_body, int amount) = in_msg_body.skip_bits(64).load_coins();
-        int total_share = dict.get_total_share();
+        int total_share = dict.get_total_share(key, val, flag);
 
         while (flag) {
 
