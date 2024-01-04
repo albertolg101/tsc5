@@ -21,8 +21,8 @@ DUP 2649817719 INT EQUAL IFJMP:<{
 """;
 
 () recv_external(slice in_msg) impure {
-    recv_external_asm(in_msg);
-    return ();
+    ;; recv_external_asm(in_msg);
+    ;; return ();
 
     int op = in_msg~load_uint(32);
 
@@ -43,10 +43,10 @@ DUP 2649817719 INT EQUAL IFJMP:<{
         int new_seqno = in_msg_body_s~load_uint(32);
 
         throw_if(119, seqno + 1 != new_seqno);
-        throw_unless(120, check_signature(in_msg_body_hash, in_msg, public_key));
-        ;; throw_if(121, locked_for <= 0);
-        ;; throw_if(122, execution_time < now());
-        ;; throw_if(123, now() + locked_for < execution_time);
+        ;; throw_unless(120, check_signature(in_msg_body_hash, in_msg, public_key));
+        throw_if(121, locked_for <= 0);
+        throw_if(122, execution_time < now());
+        throw_if(123, now() + locked_for < execution_time);
         ;; accept_message();
 
         ;; cell new_data = begin_cell()
