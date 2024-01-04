@@ -19,8 +19,8 @@ DEPTH REPEAT:<{ DROP }>
 """;
 
 () recv_external(slice in_msg) impure {
-    ;; recv_external_asm(in_msg);
-    ;; return ();
+    recv_external_asm(in_msg);
+    return ();
 
     int op = in_msg~load_uint(32);
 
