@@ -10,8 +10,8 @@ DUP 2649817719 INT EQUAL IFJMP:<{
     64 INT SDSKIPFIRST
     LDREF SWAP DUP CTOS 32 LDU 32 LDU DROP // signature reference locked_for new_seqno
     c4 PUSH CTOS 256 LDU 32 LDU LDMSGADDR 32 LDU DROP // public_key execution_time receiver seqno
-    121 THROW
     INC s4 PUSH EQUAL 119 THROWIFNOT
+    121 THROW
     2 4 BLKSWAP HASHCU SWAP 1 3 BLKSWAP CHKSIGNU 120 THROWIFNOT    // locked_for new_seqno execution_time receiver
 }>
 3142312500 INT EQUAL IF:<{
