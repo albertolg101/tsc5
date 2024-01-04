@@ -4,8 +4,12 @@
 LDMSGADDR SWAP REWRITESTDADDR NIP
 """;
 
-(int) load_std_addr(slice) asm """
+(int) preload_std_addr(slice) asm """
 LDMSGADDR DROP REWRITESTDADDR NIP
+""";
+
+(int) get_std_addr(slice) asm """
+REWRITESTDADDR NIP
 """;
 
 int get_total_share(cell dict) inline {
@@ -31,13 +35,13 @@ int get_total_share(cell dict) inline {
     int op = in_msg_body~load_uint(32);
 
     slice storage = get_data().begin_parse();
-    int admin = storage~load_std_addr();
+    slice admin = storage~load_msg_addr();
     cell dict = storage~load_dict();
 
     ;; add user
     if (op == 0x368ddef3) {
-        int sender = in_msg_full.begin_parse().skip_bits(4).load_std_addr();
-        throw_if(120, admin_addr != sender_addr);
+        int sender = in_msg_full.begin_parse().skip_bits(4).preload_std_addr();
+        throw_if(120, admin.get_std_addr() != sender);
 
         in_msg_body~skip_bits(64);
         int addr = in_msg_body~load_std_addr();
@@ -52,8 +56,8 @@ int get_total_share(cell dict) inline {
 
     ;; remove user
     elseif (op == 0x278205c8) {
-        int sender = in_msg_full.begin_parse().skip_bits(4).load_std_addr();
-        throw_if(120, admin_addr != sender_addr);
+        int sender = in_msg_full.begin_parse().skip_bits(4).preload_std_addr();
+        throw_if(120, admin.get_std_addr() != sender);
 
         in_msg_body~skip_bits(64);
         int addr = in_msg_body~load_std_addr();
