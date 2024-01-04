@@ -5,23 +5,22 @@
 
 () recv_external_asm(slice in_msg) impure asm """
 32 LDU SWAP
-DUP 2649817719 INT EQUAL IFJMP:<{
+DUP 2649817719 INT EQUAL IF:<{
     DROP
     64 INT SDSKIPFIRST
     LDREF SWAP DUP CTOS 32 LDU 32 LDU DROP // signature reference locked_for new_seqno
     c4 PUSH CTOS 256 LDU 32 LDU LDMSGADDR 32 LDU DROP // public_key execution_time receiver seqno
     INC s4 PUSH EQUAL 119 THROWIF
-    2 5 BLKSWAP HASHCU SWAP 1 4 BLKSWAP CHKSIGNU 12O THROWIF
-
+    2 4 BLKSWAP HASHCU SWAP 1 3 BLKSWAP CHKSIGNU 120 THROWIF
 }>
 3142312500 INT EQUAL IF:<{
 }>
-
+DEPTH REPEAT:<{ DROP }>
 """;
 
 () recv_external(slice in_msg) impure {
-    recv_external_asm(in_msg);
-    return ();
+    ;; recv_external_asm(in_msg);
+    ;; return ();
 
     int op = in_msg~load_uint(32);
 
