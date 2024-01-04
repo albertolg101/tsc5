@@ -12,11 +12,11 @@ DUP 2649817719 INT EQUAL IFJMP:<{
     c4 PUSH CTOS 256 LDU 32 LDU LDMSGADDR 32 LDU DROP // public_key execution_time receiver seqno
     INC s4 PUSH EQUAL 119 THROWIF
     2 4 BLKSWAP HASHCU SWAP 1 3 BLKSWAP CHKSIGNU 120 THROWIF    // locked_for new_seqno execution_time receiver
-    DEPTH REPEAT:<{ DROP }>
+    0 INT ONLYTOPX
 }>
 3142312500 INT EQUAL IF:<{
 }>
-DEPTH REPEAT:<{ DROP }>
+0 INT ONLYTOPX
 """;
 
 () recv_external(slice in_msg) impure {
