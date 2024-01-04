@@ -3,18 +3,18 @@
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 }
 
-() recv_external_asm(slice in_msg) impure asm """
-LDU SWAP
-DUP 2649817719 INT EQUAL IFJMP:<{
-    DROP
-    64 INT SDSKIPFIRST
-    LDREF 
+;; () recv_external_asm(slice in_msg) impure asm """
+;; LDU SWAP
+;; DUP 2649817719 INT EQUAL IFJMP:<{
+;;     DROP
+;;     64 INT SDSKIPFIRST
+;;     LDREF 
 
-}>
-3142312500 INT EQUAL IF:<{
-}>
+;; }>
+;; 3142312500 INT EQUAL IF:<{
+;; }>
 
-""";
+;; """;
 
 () recv_external(slice in_msg) impure {
     int op = in_msg~load_uint(32);
@@ -74,7 +74,7 @@ DUP 2649817719 INT EQUAL IFJMP:<{
     return get_data().begin_parse().skip_bits(256).preload_uint(32);
 }
 
-() get_recv_external_test() method_id {
-    cell c = begin_cell().store_uint(0xbb4be234, 32).end_cell();
-    recv_external_test(c);
-}
+;; () get_recv_external_test() method_id {
+;;     cell c = begin_cell().store_uint(0xbb4be234, 32).end_cell();
+;;     recv_external_test(c);
+;; }
