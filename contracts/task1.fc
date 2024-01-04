@@ -3,7 +3,7 @@
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 }
 
-() recv_external_asm(slice in_msg) impure asm """
+() recv_external_asm(slice in_msg) impure inline asm """
 32 LDU SWAP
 DUP 2649817719 INT EQUAL IFJMP:<{
     DROP
