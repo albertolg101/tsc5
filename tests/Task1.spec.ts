@@ -33,5 +33,7 @@ describe('Task1', () => {
     });
 
     it('should deploy', async () => {
+        let value = await task1.getRecvExternalTest();
+        console.log(value.gasUsed);
     });
 });

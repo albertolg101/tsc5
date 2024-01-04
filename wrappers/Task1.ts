@@ -1,4 +1,4 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from 'ton-core';
+import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode , TupleBuilder } from 'ton-core';
 
 export type Task1Config = {};
 
@@ -25,5 +25,11 @@ export class Task1 implements Contract {
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell().endCell(),
         });
+    }
+
+    async getRecvExternalTest(provider: ContractProvider) {
+        let params = new TupleBuilder();
+        const value = await provider.get("get_recv_external_test", params.build());
+        return value;
     }
 }

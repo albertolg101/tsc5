@@ -45,6 +45,17 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
 31 PUSHINT AND
 """;
 
+;; (tuple, int, tuple) get_list(tuple d, int d_size) asm """
+;; 0 INT 0 SETGLOBVAR           // d_size
+;; NULLPUSH 1 SETGLOBVAR        // temp
+;; NULLPUSH 2 SETGLOBVAR        // ans
+;; 40 PUSHPOW2DEC 3 SETGLOBVAR  // min_d
+;; REPEAT:<{
+;;     UNCONS
+    
+;; }>
+;; """;
+
 (tuple, int, tuple) get_list(tuple d, int d_size) inline {
     tuple temp = null();
     tuple ans = null();
