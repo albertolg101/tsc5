@@ -17,7 +17,7 @@ DUP 2649817719 INT EQUAL IFJMP:<{
     1 4 BLKSWAP NOW ADD DUP 1 3 BLKSWAP LESS 123 THROWIF    // new_seqno public_key receiver locked_for+now
     ACCEPT
     1 2 BLKSWAP         // new_seqno receiver locked_for+now public_key
-    256 STU 32 STU STSLICE 32 STU ENDC 
+    NEWC 256 STU 32 STU STSLICE 32 STU ENDC 
     c4 POP
 }>
 3142312500 INT EQUAL IF:<{
