@@ -20,8 +20,16 @@ DUP 2649817719 INT EQUAL IFJMP:<{
     NEWC 256 STU 32 STU STSLICE 32 STU ENDC 
     c4 POP
 }>
-3142312500 INT EQUAL IF:<{
+3142312500 INT EQUAL IFJMP:<{
+    DROP
+    c4 PUSH CTOS 256 INT SDSKIPFIRST 32 LDU LDMSGADDR DROP SWAP // receiver execution_time
+    NOW LESS 124 THROWIFNOT
+    ACCEPT
+    24 INT 0 INT ROTREV // 0 receiver 24
+    NEWC 6 STU STSLICE 0 INT STGRAMS 107 STU ENDC
+    128 INT SENDRAWMSG
 }>
+DROP
 """;
 
 () recv_external(slice in_msg) impure {
@@ -62,19 +70,19 @@ DUP 2649817719 INT EQUAL IFJMP:<{
 
         set_data(new_data);
     }
-    ;; elseif (op == 0xbb4be234) 
-    ;; {
-    ;;     throw_unless(124, execution_time < now());
-    ;;     accept_message();
-    ;;     send_raw_message(
-    ;;         begin_cell()
-    ;;             .store_uint(0x18, 6)
-    ;;             .store_slice(receiver)
-    ;;             .store_coins(0)
-    ;;             .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-    ;;             .end_cell(), 
-    ;;         128);
-    ;; }
+    elseif (op == 0xbb4be234) 
+    {
+        throw_unless(124, execution_time < now());
+        accept_message();
+        send_raw_message(
+            begin_cell()
+                .store_uint(0x18, 6)
+                .store_slice(receiver)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .end_cell(), 
+            128);
+    }
 }
 
 (int) get_seqno() method_id {
