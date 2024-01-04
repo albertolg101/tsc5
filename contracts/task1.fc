@@ -11,10 +11,10 @@ DUP 2649817719 INT EQUAL IFJMP:<{
     LDREF SWAP DUP CTOS 32 LDU 32 LDU DROP // signature reference locked_for new_seqno
     c4 PUSH CTOS 256 LDU 32 LDU LDMSGADDR 32 LDU DROP // public_key execution_time receiver seqno
     INC s4 PUSH EQUAL 119 THROWIFNOT
-    2 5 BLKSWAP HASHCU SWAP s3 PUSH CHKSIGNU 120 THROWIFNOT // locked_for new_seqno public_key execution_time receiver
-    // s4 PUSH ISPOS 121 THROWIFNOT
-    // s1 PUSH NOW LESS 122 THROWIF
-    // 1 4 BLKSWAP NOW ADD DUP 1 3 BLKSWAP LESS 123 THROWIF    // new_seqno public_key receiver locked_for+now
+    2 5 BLKSWAP HASHCU SWAP s5 PUSH CHKSIGNU 120 THROWIFNOT // locked_for new_seqno public_key execution_time receiver
+    s4 PUSH ISPOS 121 THROWIFNOT
+    s1 PUSH NOW LESS 122 THROWIF
+    1 4 BLKSWAP NOW ADD DUP 1 3 BLKSWAP LESS 123 THROWIF    // new_seqno public_key receiver locked_for+now
 }>
 3142312500 INT EQUAL IF:<{
 }>
