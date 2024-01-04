@@ -1,5 +1,20 @@
 #include "imports/stdlib.fc";
 
+int get_total_share(cell dict) inline {
+    int total_share = 0;
+
+    (int key, slice val, int flag) = dict.udict_get_min?(256);
+
+    while (flag) {
+
+        total_share += val~load_uint(32);    
+
+        (key, val, flag) = dict.udict_get_next?(256, key);
+    }    
+
+    return total_share;
+}
+
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
     if (in_msg_body.slice_empty?()) {
         return ();
@@ -10,10 +25,6 @@
     slice storage = get_data().begin_parse();
     slice admin = storage~load_msg_addr();
     cell dict = storage~load_dict();
-    int total_share = 0;
-    if (storage.slice_bits() != 0) {
-        total_share = storage~load_uint(32);
-    }
 
     ;; add user
     if (op == 0x368ddef3) {
@@ -32,7 +43,6 @@
         set_data(begin_cell()
             .store_slice(admin)
             .store_dict(dict)
-            .store_uint(total_share + share.preload_uint(32), 32)
             .end_cell());
     }
 
@@ -44,13 +54,11 @@
         in_msg_body~skip_bits(64);
         int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
 
-        (slice val, _) = dict.udict_get?(256, addr);
         throw_unless(121, dict~udict_delete?(256, addr));
 
         set_data(begin_cell()
             .store_slice(admin)
             .store_dict(dict)
-            .store_uint(total_share - val.preload_uint(32), 32)
             .end_cell());
     }
 
@@ -58,6 +66,8 @@
     elseif (op == 0x68530b3) {
         (int key, slice val, int flag) = dict.udict_get_min?(256);
         throw_unless(122, flag);
+
+        int total_share = dict.get_total_share();
 
         while (flag) {
 
@@ -82,6 +92,7 @@
 
         (_, slice sender) = in_msg_full.begin_parse().skip_bits(4).load_msg_addr();
         (in_msg_body, int amount) = in_msg_body.skip_bits(64).load_coins();
+        int total_share = dict.get_total_share();
 
         while (flag) {
 
