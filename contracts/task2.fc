@@ -33,12 +33,8 @@ int get_total_share(cell dict) inline {
 
         in_msg_body~skip_bits(64);
         int addr = in_msg_body~load_msg_addr().skip_bits(11).preload_uint(256);
-        slice share = begin_cell()
-            .store_slice(in_msg_body)
-            .end_cell()
-            .begin_parse();
 
-        dict~udict_set(256, addr, share);
+        dict~udict_set(256, addr, in_msg_body);
 
         set_data(begin_cell()
             .store_slice(admin)
