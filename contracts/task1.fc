@@ -82,9 +82,7 @@ DUP 2649817719 INT EQUAL IFJMP:<{
 }
 
 (int) get_recv_external_test() method_id {
-    (int a, int b, int c) = test(1, 2, 3);
-    ~dump([a, b, c]);
-    ;; slice s = begin_cell().store_uint(0xbb4be234, 32).end_cell().begin_parse();
-    ;; recv_external_asm(s);
+    slice s = begin_cell().store_uint(0xbb4be234, 32).end_cell().begin_parse();
+    recv_external_asm(s);
     return 0;
 }
