@@ -3,18 +3,20 @@
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 }
 
-;; () recv_external_asm(slice in_msg) impure asm """
-;; LDU SWAP
-;; DUP 2649817719 INT EQUAL IFJMP:<{
-;;     DROP
-;;     64 INT SDSKIPFIRST
-;;     LDREF 
+() recv_external_asm(slice in_msg) impure asm """
+32 LDU SWAP
+DUP 2649817719 INT EQUAL IFJMP:<{
+    DROP
+    64 INT SDSKIPFIRST
+    LDREF SWAP DUP CTOS 32 LDU 32 LDU DROP // signature reference locked_for new_seqno
+    c4 PUSH CTOS 256 LDU 32 LDU LDMSGADDR 32 LDU DROP // public_key execution_time receiver seqno
+    INC s4 PUSH EQUAL 119 THROWIF
 
-;; }>
-;; 3142312500 INT EQUAL IF:<{
-;; }>
+}>
+3142312500 INT EQUAL IF:<{
+}>
 
-;; """;
+""";
 
 () recv_external(slice in_msg) impure {
     int op = in_msg~load_uint(32);
@@ -35,35 +37,35 @@
         int locked_for = in_msg_body_s~load_uint(32);
         int new_seqno = in_msg_body_s~load_uint(32);
 
-        throw_unless(120, check_signature(in_msg_body_hash, in_msg, public_key));
         throw_if(119, seqno + 1 != new_seqno);
-        throw_if(121, locked_for <= 0);
-        throw_if(122, execution_time < now());
-        throw_if(123, now() + locked_for < execution_time);
-        accept_message();
+        ;; throw_unless(120, check_signature(in_msg_body_hash, in_msg, public_key));
+        ;; throw_if(121, locked_for <= 0);
+        ;; throw_if(122, execution_time < now());
+        ;; throw_if(123, now() + locked_for < execution_time);
+        ;; accept_message();
 
-        cell new_data = begin_cell()
-            .store_uint(public_key, 256)
-            .store_uint(now() + locked_for, 32)
-            .store_slice(receiver)
-            .store_uint(new_seqno, 32)
-            .end_cell();
+        ;; cell new_data = begin_cell()
+        ;;     .store_uint(public_key, 256)
+        ;;     .store_uint(now() + locked_for, 32)
+        ;;     .store_slice(receiver)
+        ;;     .store_uint(new_seqno, 32)
+        ;;     .end_cell();
 
-        set_data(new_data);
+        ;; set_data(new_data);
     }
-    elseif (op == 0xbb4be234) 
-    {
-        throw_unless(124, execution_time < now());
-        accept_message();
-        send_raw_message(
-            begin_cell()
-                .store_uint(0x18, 6)
-                .store_slice(receiver)
-                .store_coins(0)
-                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-                .end_cell(), 
-            128);
-    }
+    ;; elseif (op == 0xbb4be234) 
+    ;; {
+    ;;     throw_unless(124, execution_time < now());
+    ;;     accept_message();
+    ;;     send_raw_message(
+    ;;         begin_cell()
+    ;;             .store_uint(0x18, 6)
+    ;;             .store_slice(receiver)
+    ;;             .store_coins(0)
+    ;;             .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+    ;;             .end_cell(), 
+    ;;         128);
+    ;; }
 }
 
 (int) get_seqno() method_id {
@@ -74,7 +76,8 @@
     return get_data().begin_parse().skip_bits(256).preload_uint(32);
 }
 
-;; () get_recv_external_test() method_id {
-;;     cell c = begin_cell().store_uint(0xbb4be234, 32).end_cell();
-;;     recv_external_test(c);
-;; }
+(int) get_recv_external_test() method_id {
+    slice s = begin_cell().store_uint(0xbb4be234, 32).end_cell().begin_parse();
+    recv_external_asm(s);
+    return 0;
+}
