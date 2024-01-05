@@ -45,45 +45,6 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
 31 PUSHINT AND
 """;
 
-;; (tuple, int, tuple) get_list(tuple d, int d_size) asm """
-;; 0 INT 0 SETGLOBVAR           // d_size
-;; NULLPUSH 1 SETGLOBVAR        // temp
-;; NULLPUSH 2 SETGLOBVAR        // ans
-;; 40 PUSHPOW2DEC 3 SETGLOBVAR  // min_d
-;; REPEAT:<{
-;;     UNCONS
-    
-;; }>
-;; """;
-
-(tuple, int, tuple) get_list(tuple d, int d_size) inline {
-    tuple temp = null();
-    tuple ans = null();
-    int min_d = INF;
-
-    repeat(d_size) {
-        int td = d~pop_back();
-        if ((td >> 10) > min_d) {
-            temp~push_back(td);
-        }
-        elseif ((td >> 10) == min_d) {
-            ans~push_back(td);
-            d_size -= 1;
-        }
-        else { ;; (td >> 10) < min_d
-            min_d = td >> 10;
-            while (~ ans.is_null?()) {
-                temp~push_back(ans~pop_back());
-                d_size += 1;
-            }
-            ans~push_back(td);
-            d_size -= 1;
-        }
-    }
-
-    return (temp, d_size, ans);
-}
-
 (int, int, int, tuple) solve(int n, int m, tuple maze) method_id {
     ;; start node
     int sx = 0;
@@ -124,38 +85,16 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
     ;; tuple dy = to_tuple([0, 1, 0, -1]);
 
     int cost = 0;
-    int x = -1;
-    int y = -1;
-    tuple d = null();
-    int d_size = 0;
+    int x = sx;
+    int y = sy;
+    cell d = new_dict();
     tuple t = new_tuple_of(new_tuple_of(INF, m), n);
-    tuple list = null();
+    slice empty_slice = begin_cell().end_cell().begin_parse();
 
     t~set_index_var(sx, sy, 0);
-    list~push_back(wrap_distance(0, sx, sy));
 
     repeat(n * m) {
 
-        if (list.is_null?()) {
-            (d, d_size, list) = d.get_list(d_size);
-        }
-
-        (cost, x, y) = unwrap_distance(list~pop_back());
-
-        if ((x == ex) & (y == ey)) {
-            repeat((cost & 0x3FF) - 1) {
-                (_, x, y) = unwrap_distance(t.at(x).at(y));
-                maze~set_index_var(x, y, 33);
-            }
-
-            return (
-                cost >> 20,
-                (cost >> 10) & 0x3FF,
-                cost & 0x3FF,
-                maze
-            );
-        }
-        
         i = 0;
         repeat(8) {
             int nx = x + dx.at(i);
@@ -175,13 +114,30 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
 
                 if (target_cost > new_cost) {
                     t~set_index_var(nx, ny, wrap_distance(new_cost, x, y));
-                    d~push_back(wrap_distance(new_cost, nx, ny));
-                    d_size += 1;
+                    d~udict_set(40, wrap_distance(new_cost, nx, ny), empty_slice);
                 }
             }
 
             i += 1;
         }
+        
+        (int key, _, _) = d~udict::delete_get_min(40);
+        (cost, x, y) = unwrap_distance(key);
+
+        if ((x == ex) & (y == ey)) {
+            repeat((cost & 0x3FF) - 1) {
+                (_, x, y) = unwrap_distance(t.at(x).at(y));
+                maze~set_index_var(x, y, 33);
+            }
+
+            return (
+                cost >> 20,
+                (cost >> 10) & 0x3FF,
+                cost & 0x3FF,
+                maze
+            );
+        }
+        
     }
 
     return (0, 0, 0, null());
