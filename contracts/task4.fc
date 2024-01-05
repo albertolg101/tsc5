@@ -66,78 +66,74 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
             if (value == 83) {
                 sx = i;
                 sy = j;
-            }
 
-            elseif (value == 69) {
-                ex = i;
-                ey = j;
+                ;; when you change this remember to change repeat 8 by 4
+                tuple dx = to_tuple([1, 0, -1, 0, 1, 1, -1, -1]);
+                tuple dy = to_tuple([0, 1, 0, -1, 1, -1, 1, -1]);
+                ;; tuple dx = to_tuple([1, 0, -1, 0]);
+                ;; tuple dy = to_tuple([0, 1, 0, -1]);
+
+                int cost = 0;
+                int x = sx;
+                int y = sy;
+                cell d = new_dict();
+                tuple t = new_tuple_of(new_tuple_of(INF, m), n);
+                slice empty_slice = begin_cell().end_cell().begin_parse();
+
+                t~set_index_var(sx, sy, 0);
+
+                repeat(n * m) {
+
+                    i = 0;
+                    repeat(8) {
+                        int nx = x + dx.at(i);
+                        int ny = y + dy.at(i);
+
+                        if ((0 <= nx) & (nx < n) & (0 <= ny) & (ny < m)) {
+                            int target_cost = t.at(nx).at(ny) >> 10;
+                            int new_cost = cost + 1;
+                            int value = maze.at(nx).at(ny);
+
+                            if (value == 63) {
+                                new_cost += (1 << 10);
+                            }
+                            elseif (value == 88) {
+                                new_cost += (1 << 20);
+                            }
+
+                            if (target_cost > new_cost) {
+                                t~set_index_var(nx, ny, wrap_distance(new_cost, x, y));
+                                d~udict_set(40, wrap_distance(new_cost, nx, ny), empty_slice);
+                            }
+                        }
+
+                        i += 1;
+                    }
+                    
+                    (int key, _, _) = d~udict::delete_get_min(40);
+                    (cost, x, y) = unwrap_distance(key);
+
+                    if (maze.at(x).at(y) == 69) {
+                        repeat((cost & 0x3FF) - 1) {
+                            (_, x, y) = unwrap_distance(t.at(x).at(y));
+                            maze~set_index_var(x, y, 33);
+                        }
+
+                        return (
+                            cost >> 20,
+                            (cost >> 10) & 0x3FF,
+                            cost & 0x3FF,
+                            maze
+                        );
+                    }
+                    
+                }
+
             }
 
             j += 1;
         }
         i += 1;
-    }
-
-    ;; when you change this remember to change repeat 8 by 4
-    tuple dx = to_tuple([1, 0, -1, 0, 1, 1, -1, -1]);
-    tuple dy = to_tuple([0, 1, 0, -1, 1, -1, 1, -1]);
-    ;; tuple dx = to_tuple([1, 0, -1, 0]);
-    ;; tuple dy = to_tuple([0, 1, 0, -1]);
-
-    int cost = 0;
-    int x = sx;
-    int y = sy;
-    cell d = new_dict();
-    tuple t = new_tuple_of(new_tuple_of(INF, m), n);
-    slice empty_slice = begin_cell().end_cell().begin_parse();
-
-    t~set_index_var(sx, sy, 0);
-
-    repeat(n * m) {
-
-        i = 0;
-        repeat(8) {
-            int nx = x + dx.at(i);
-            int ny = y + dy.at(i);
-
-            if ((0 <= nx) & (nx < n) & (0 <= ny) & (ny < m)) {
-                int target_cost = t.at(nx).at(ny) >> 10;
-                int new_cost = cost + 1;
-                int value = maze.at(nx).at(ny);
-
-                if (value == 63) {
-                    new_cost += (1 << 10);
-                }
-                elseif (value == 88) {
-                    new_cost += (1 << 20);
-                }
-
-                if (target_cost > new_cost) {
-                    t~set_index_var(nx, ny, wrap_distance(new_cost, x, y));
-                    d~udict_set(40, wrap_distance(new_cost, nx, ny), empty_slice);
-                }
-            }
-
-            i += 1;
-        }
-        
-        (int key, _, _) = d~udict::delete_get_min(40);
-        (cost, x, y) = unwrap_distance(key);
-
-        if ((x == ex) & (y == ey)) {
-            repeat((cost & 0x3FF) - 1) {
-                (_, x, y) = unwrap_distance(t.at(x).at(y));
-                maze~set_index_var(x, y, 33);
-            }
-
-            return (
-                cost >> 20,
-                (cost >> 10) & 0x3FF,
-                cost & 0x3FF,
-                maze
-            );
-        }
-        
     }
 
     return (0, 0, 0, null());
