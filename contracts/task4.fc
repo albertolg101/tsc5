@@ -63,12 +63,12 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
 
     repeat(d_size) {
         int td = d~pop_back();
-        if ((td >> 10) > min_d) {
-            temp~push_back(td);
-        }
-        elseif ((td >> 10) == min_d) {
+        if ((td >> 10) == min_d) {
             ans~push_back(td);
             d_size -= 1;
+        }
+        elseif ((td >> 10) > min_d) {
+            temp~push_back(td);
         }
         else { ;; (td >> 10) < min_d
             min_d = td >> 10;
@@ -82,26 +82,6 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
     }
 
     return (temp, d_size, ans);
-}
-
-(tuple, int, int, tuple) extract(tuple d, int d_size, int min_d) inline {
-    tuple temp = null();
-    tuple ans = null();
-    int next_min_d = INF;
-
-    repeat(d_size) {
-        int td = d~pop_back();
-        if ((td >> 10) > min_d) {
-            temp~push_back(td);
-            next_min_d = min(next_min_d, (td >> 10));
-        }
-        elseif ((td >> 10) == min_d) {
-            ans~push_back(td);
-            d_size -= 1;
-        }
-    }
-
-    return (temp, d_size, next_min_d, ans);
 }
 
 (int, int, int, tuple) solve(int n, int m, tuple maze) method_id {
@@ -137,7 +117,6 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
                 int y = -1;
                 tuple d = null();
                 int d_size = 0;
-                int min_d = INF;
                 tuple t = new_tuple_of(new_tuple_of(INF, m), n);
                 tuple list = null();
 
@@ -147,7 +126,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
                 repeat(n * m) {
 
                     if (list.is_null?()) {
-                        (d, d_size, min_d, list) = d.extract(d_size, min_d);
+                        (d, d_size, list) = d.get_list(d_size);
                     }
 
                     (cost, x, y) = unwrap_distance(list~pop_back());
@@ -187,7 +166,6 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
                                 t~set_index_var(nx, ny, wrap_distance(new_cost, x, y));
                                 d~push_back(wrap_distance(new_cost, nx, ny));
                                 d_size += 1;
-                                min_d = min(min_d, new_cost);
                             }
                         }
 
