@@ -63,15 +63,16 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
 
     repeat(d_size) {
         int td = d~pop_back();
-        if ((td >> 10) == min_d) {
+        int cost = td >> 10;
+        if (cost == min_d) {
             ans~push_back(td);
             d_size -= 1;
         }
-        elseif ((td >> 10) > min_d) {
+        elseif (cost > min_d) {
             temp~push_back(td);
         }
         else { ;; (td >> 10) < min_d
-            min_d = td >> 10;
+            min_d = cost;
             while (~ ans.is_null?()) {
                 temp~push_back(ans~pop_back());
                 d_size += 1;
