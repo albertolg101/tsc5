@@ -45,7 +45,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
 31 PUSHINT AND
 """;
 
-(int, tuple, tuple, int) get_list(tuple d, int d_size, int min_d) asm """
+(int, tuple, tuple, int) get_list(tuple d, int d_size, int min_d) inline asm """
 PUSHNULL PUSHNULL 40 PUSHPOW2DEC 
 1 5 BLKSWAP     // d_size - min_d - temp - ans - next_min_d - d
 s5 PUSH REPEAT:<{
