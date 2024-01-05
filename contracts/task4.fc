@@ -107,8 +107,8 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
                 sy = j;
                 
                 ;; when you change this remember to change repeat 8 by 4
-                tuple dx = to_tuple([1, 0, -1, 0, 1, 1, -1, -1]);
-                tuple dy = to_tuple([0, 1, 0, -1, 1, -1, 1, -1]);
+                tuple dx = to_tuple([1, 1, -1, -1, 1, 0, -1, 0]);
+                tuple dy = to_tuple([1, -1, 1, -1, 0, 1, 0, -1]);
                 ;; tuple dx = to_tuple([1, 0, -1, 0]);
                 ;; tuple dy = to_tuple([0, 1, 0, -1]);
 
@@ -172,6 +172,11 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
                         i += 1;
                     }
                 }
+            }
+
+            elseif (value == 69) {
+                ex = i;
+                ey = j;
             }
 
             j += 1;
