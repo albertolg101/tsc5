@@ -178,7 +178,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
                         ;; d = temp;
                         ;; min_d = next_min_d;
                         if (d_size > 0) {
-                            (d, d_size, list) = d.get_list(d_size);
+                            (d, d_size, min_d, list) = d.extract(d_size, min_d);
                         }
                         elseif (d2_size > 0){
                             (d2, d2_size, list) = d2.get_list(d2_size);
@@ -236,6 +236,7 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
                                     d3~push_back(wrap_distance(new_cost, nx, ny));
                                     d3_size += 1;
                                 }
+                                min_d = min(min_d, new_cost);
                             }
                         }
 
