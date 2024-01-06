@@ -40,22 +40,6 @@ c4 PUSH CTOS LDMSGADDR LDDICT DROP
             .end_cell());
     }
 
-    ;; remove user
-    elseif (op == 0x278205c8) {
-        int sender = in_msg_full.begin_parse().skip_bits(4).preload_std_addr();
-        throw_if(120, admin.get_std_addr() != sender);
-
-        in_msg_body~skip_bits(64);
-        int addr = in_msg_body~load_std_addr();
-
-        throw_unless(121, dict~udict_delete?(256, addr));
-
-        set_data(begin_cell()
-            .store_slice(admin)
-            .store_dict(dict)
-            .end_cell());
-    }
-
     ;; split
     elseif (op == 0x68530b3) {
         (int key, slice val, int flag) = dict.udict_get_min?(256);
@@ -85,6 +69,23 @@ c4 PUSH CTOS LDMSGADDR LDDICT DROP
             (key, val, flag) = dict.udict_get_next?(256, key);
         }
     }
+
+    ;; remove user
+    elseif (op == 0x278205c8) {
+        int sender = in_msg_full.begin_parse().skip_bits(4).preload_std_addr();
+        throw_if(120, admin.get_std_addr() != sender);
+
+        in_msg_body~skip_bits(64);
+        int addr = in_msg_body~load_std_addr();
+
+        throw_unless(121, dict~udict_delete?(256, addr));
+
+        set_data(begin_cell()
+            .store_slice(admin)
+            .store_dict(dict)
+            .end_cell());
+    }
+
 
     ;; transfer notification
     elseif (op == 0x7362d09c) {
