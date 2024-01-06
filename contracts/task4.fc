@@ -89,11 +89,6 @@ DROP 1 3 BLKSWAP DROP // d_size - temp - ans - next_min_d
     int sx = 0;
     int sy = 0;
 
-    ;; end node
-    int ex = 0;
-    int ey = 0;
-    
-    
     int i = 0;
     int j = 0;
     repeat(n) {
