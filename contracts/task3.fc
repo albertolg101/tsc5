@@ -4,8 +4,8 @@ cell get_storage() {
     return get_data().begin_parse().preload_ref();
 }
 
-cell wrap_storage(cell storage, int version_id) asm """
-NEWC 32 STU STREF ENDC
+() wrap_storage(cell storage, int version_id) asm """
+NEWC 32 STU STREF ENDC c4 POP
 """;
 
 (int, cell) unwrap_storage() asm """
@@ -21,7 +21,7 @@ int version() method_id {
     int expected_version = in_msg_body~load_uint(32); ;; Load the expected version
 
     if (expected_version == 0) {
-        set_data(wrap_storage(get_data(), 1));
+        wrap_storage(get_data(), 1);
         return ();
     }
 
@@ -52,7 +52,7 @@ int version() method_id {
     }
     
     storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
-    set_data(wrap_storage(storage, actual_version));
+    wrap_storage(storage, actual_version);
 }
 
 ;; <<<<< Custom version-specific code begins
