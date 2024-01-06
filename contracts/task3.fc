@@ -4,12 +4,9 @@ cell get_storage() {
     return get_data().begin_parse().preload_ref();
 }
 
-cell wrap_storage(int version_id, cell storage) inline {
-    return begin_cell()
-        .store_uint(version_id, 32)
-        .store_ref(storage)
-    .end_cell();
-}
+cell wrap_storage(cell storage, int version_id) asm """
+NEWC 32 STU STREF ENDC
+""";
 
 ;; Return the current version of the smart contract
 int version() method_id {
@@ -20,7 +17,7 @@ int version() method_id {
     int expected_version = in_msg_body~load_uint(32); ;; Load the expected version
 
     if (expected_version == 0) {
-        set_data(wrap_storage(1, get_data()));
+        set_data(wrap_storage(get_data(), 1));
         return ();
     }
 
@@ -53,7 +50,7 @@ int version() method_id {
     }
     
     storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
-    set_data(wrap_storage(actual_version, storage));
+    set_data(wrap_storage(storage, actual_version));
 }
 
 ;; <<<<< Custom version-specific code begins
