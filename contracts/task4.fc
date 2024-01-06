@@ -196,13 +196,13 @@ DROP 1 3 BLKSWAP DROP // d_size - temp - ans - next_min_d
 
                             if (target_cost > new_cost) {
                                 t~set_index_var(nx, ny, wrap_distance(new_cost, x, y));
-                                if (new_cost < (1 << 10)) {
-                                    d~push_back(wrap_distance(new_cost, nx, ny));
-                                    d_size += 1;
-                                }
-                                elseif (new_cost >= (1 << 20)) {
+                                if (new_cost >= (1 << 20)) {
                                     d3~push_back(wrap_distance(new_cost, nx, ny));
                                     d3_size += 1;
+                                }
+                                elseif (new_cost < (1 << 10)) {
+                                    d~push_back(wrap_distance(new_cost, nx, ny));
+                                    d_size += 1;
                                 }
                                 else {
                                     d2~push_back(wrap_distance(new_cost, nx, ny));
