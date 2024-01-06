@@ -45,23 +45,23 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
 31 PUSHINT AND
 """;
 
-;; (int, tuple, tuple, int) get_list(tuple d, int d_size, int min_d) inline asm """
-;; PUSHNULL PUSHNULL 40 PUSHPOW2DEC 
-;; 1 5 BLKSWAP     // d_size - min_d - temp - ans - next_min_d - d
-;; s5 PUSH REPEAT:<{
-;;     UNCONS      // td
-;;     DUP 10 RSHIFT# DUP s7 PUSH GREATER // td >> 10
-;;     IF:<{
-;;         1 3 BLKSWAP MIN 2 1 BLKSWAP
-;;         1 4 BLKSWAP SWAP CONS 3 1 BLKSWAP
-;;     }>ELSE<{
-;;         DROP
-;;         1 3 BLKSWAP SWAP CONS 2 1 BLKSWAP
-;;         1 5 BLKSWAP DEC 5 1 BLKSWAP
-;;     }>
-;; }>
-;; DROP 1 3 BLKSWAP DROP // d_size - temp - ans - next_min_d
-;; """;
+(int, tuple, tuple, int) get_list(tuple d, int d_size, int min_d) inline asm """
+PUSHNULL PUSHNULL 40 PUSHPOW2DEC 
+1 5 BLKSWAP     // d_size - min_d - temp - ans - next_min_d - d
+s5 PUSH REPEAT:<{
+    UNCONS      // td
+    DUP 10 RSHIFT# DUP s7 PUSH GREATER // td >> 10
+    IF:<{
+        1 3 BLKSWAP MIN 2 1 BLKSWAP
+        1 4 BLKSWAP SWAP CONS 3 1 BLKSWAP
+    }>ELSE<{
+        DROP
+        1 3 BLKSWAP SWAP CONS 2 1 BLKSWAP
+        1 5 BLKSWAP DEC 5 1 BLKSWAP
+    }>
+}>
+DROP 1 3 BLKSWAP DROP // d_size - temp - ans - next_min_d
+""";
 
 (tuple, int, int, tuple) extract(tuple d, int d_size, int min_d) inline {
     tuple temp = null();
@@ -82,34 +82,6 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
     }
 
     return (temp, d_size, next_min_d, ans);
-}
-
-(tuple, int, tuple) get_list(tuple d, int d_size) inline {
-    tuple temp = null();
-    tuple ans = null();
-    int min_d = INF;
-
-    repeat(d_size) {
-        int td = d~pop_back();
-        int cost =  td >> 10;
-        if (cost > min_d) {
-            temp~push_back(td);
-        }
-        elseif (cost == min_d) {
-            ans~push_back(td);
-            d_size -= 1;
-        } else {
-            while (~(ans.is_null?())) {
-                temp~push_back(ans~pop_back());
-                d_size += 1;
-            }
-            min_d = cost;
-            ans~push_back(td);
-            d_size -= 1;
-        }
-    }
-
-    return (temp, d_size, ans);
 }
 
 (int, int, int, tuple) solve(int n, int m, tuple maze) method_id {
@@ -181,10 +153,10 @@ DUP 5 RSHIFT# 31 PUSHINT AND SWAP
                             (d, d_size, min_d, list) = d.extract(d_size, min_d);
                         }
                         elseif (d2_size > 0){
-                            (d2, d2_size, list) = d2.get_list(d2_size);
+                            (d2, d2_size, min_d, list) = d2.extract(d2_size, min_d);
                         }
                         else {
-                            (d3, d3_size, list) = d3.get_list(d3_size);
+                            (d3, d3_size, min_d, list) = d3.extract(d3_size, min_d);
                         }
                         ;; (d_size, d, list, min_d) = d.get_list(d_size, min_d);
                     }
