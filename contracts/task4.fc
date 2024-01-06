@@ -121,8 +121,6 @@ DROP 1 3 BLKSWAP DROP // d_size - temp - ans - next_min_d
                 int d2_size = 0;
                 tuple d3 = null();
                 int d3_size = 0;
-                tuple d4 = null();
-                int d4_size = 0;
                 int min_d = INF;
                 tuple t = new_tuple_of(new_tuple_of(INF, m), n);
                 tuple list = null();
@@ -157,11 +155,8 @@ DROP 1 3 BLKSWAP DROP // d_size - temp - ans - next_min_d
                         elseif (d2_size > 0){
                             (d2, d2_size, min_d, list) = d2.extract(d2_size, min_d);
                         }
-                        elseif (d3_size > 0) {
-                            (d3, d3_size, min_d, list) = d3.extract(d3_size, min_d);
-                        }
                         else {
-                            (d4, d4_size, min_d, list) = d4.extract(d4_size, min_d);
+                            (d3, d3_size, min_d, list) = d3.extract(d3_size, min_d);
                         }
                         ;; (d_size, d, list, min_d) = d.get_list(d_size, min_d);
                     }
@@ -205,17 +200,13 @@ DROP 1 3 BLKSWAP DROP // d_size - temp - ans - next_min_d
                                     d~push_back(wrap_distance(new_cost, nx, ny));
                                     d_size += 1;
                                 }
-                                elseif (new_cost < (1 << 10) + 5) {
+                                elseif (new_cost < (1 << 20)) {
                                     d2~push_back(wrap_distance(new_cost, nx, ny));
                                     d2_size += 1;
                                 }
-                                elseif (new_cost < (1 << 20)) {
+                                else {
                                     d3~push_back(wrap_distance(new_cost, nx, ny));
                                     d3_size += 1;
-                                }
-                                else {
-                                    d4~push_back(wrap_distance(new_cost, nx, ny));
-                                    d4_size += 1;
                                 }
                                 min_d = min(min_d, new_cost);
                             }
